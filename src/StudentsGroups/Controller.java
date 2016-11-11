@@ -5,6 +5,8 @@
  */
 package StudentsGroups;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
 
 /**
@@ -12,7 +14,26 @@ import java.util.Collection;
  * @author Elvira
  */
 public class Controller {
-    Collection<Group> groups;
-    
-    
+
+    public static boolean addGroup(String groupNumber, String groupFaculty){
+        return false;
+    }
+    public static boolean removeGroup(String groupNumber, String groupFaculty){
+        return true;
+    }
+    public static boolean readFromTxtFile(File file) throws IOException{
+        return true;
+    }
+    //десериализация
+    public static boolean readFromBinFile(File file) throws IOException{
+        return true;
+    }
+    public static boolean writeToTxtFile(File file) throws IOException{
+        throw  new IOException();
+    }
+    //сериализация
+    public static boolean writeToBinFile(File file) throws IOException{
+        return false;
+    }
+
 }
