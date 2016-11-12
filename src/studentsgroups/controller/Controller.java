@@ -12,6 +12,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Collection;
+import java.util.LinkedList;
+import studentsgroups.controller.utils.CheckMatching;
+import studentsgroups.model.Group;
+import studentsgroups.model.Student;
 
 /**
  *
@@ -20,7 +25,11 @@ import java.io.ObjectOutputStream;
 public class Controller {
     
     private Faculty faculty;
-        
+
+    public Controller(Faculty faculty) {
+        this.faculty = faculty;
+    }
+    
     /**
      * Сериализация
      * @param file
@@ -70,5 +79,29 @@ public class Controller {
 
     public Faculty getFaculty() {
         return faculty;
-    }    
+    }
+    
+    public Collection<Group> getGroupsByPattern(String pattern){
+        Collection<Group> groupsByPattern = new LinkedList<>();
+        CheckMatching checker = new CheckMatching(pattern);
+        for(Group group : faculty){
+            if(checker.isMatches(group.getNumberOfGroup())){
+                groupsByPattern.add(group);
+            }
+        }
+        return groupsByPattern;
+    }
+    
+    public Collection<Student> getStudentsByPattern(String pattern){
+        Collection<Student> studentsByPattern = new LinkedList<>();
+        CheckMatching checker = new CheckMatching(pattern);
+        for(Group group : faculty){            
+            for(Student student : group){
+                if(checker.isMatches(student.getSurname()) || checker.isMatches(student.getName()) || checker.isMatches(student.getPatronymic())){
+                    studentsByPattern.add(student);
+                }
+            }
+        }
+        return studentsByPattern;
+    }
 }
