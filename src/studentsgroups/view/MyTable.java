@@ -1,4 +1,4 @@
-package studentsgroups.view;
+package StudentsGroups.View;
 
 import javax.swing.*;
 import javax.swing.table.TableColumnModel;
