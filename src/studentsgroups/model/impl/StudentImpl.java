@@ -18,14 +18,12 @@ public class StudentImpl implements Student{
     private String surname;
     private String name;
     private String patronymic;
-    private Group group;
     private Date enrollmentDate;
 
-    public StudentImpl(String surname, String name, String patronymic, Group group, Date enrollmentDate) {
+    public StudentImpl(String surname, String name, String patronymic, Date enrollmentDate) {
         this.surname = surname;
         this.name = name;
         this.patronymic = patronymic;
-        this.group = group;
         this.enrollmentDate = enrollmentDate;
     }    
 
@@ -42,11 +40,6 @@ public class StudentImpl implements Student{
     @Override
     public String getPatronymic() {
         return patronymic;
-    }
-
-    @Override
-    public Group getGroup() {
-        return group;
     }
 
     @Override
@@ -67,11 +60,6 @@ public class StudentImpl implements Student{
     @Override
     public void setPatronymic(String patronymic) {
         this.patronymic = patronymic;
-    }
-
-    @Override
-    public void setGroup(Group group) {
-        this.group = group;
     }
 
     @Override

@@ -105,4 +105,9 @@ public class Controller {
         return studentsByPattern;
     } 
     
+    public void addStudent(Group group, Student student){
+        group.addStudent(student);
+    }
+    
+    
 }

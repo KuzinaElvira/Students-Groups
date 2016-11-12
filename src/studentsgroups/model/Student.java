@@ -5,10 +5,8 @@
  */
 package studentsgroups.model;
 
-import studentsgroups.model.Group;
 import java.io.Serializable;
 import java.util.Date;
-import studentsgroups.model.Group;
 
 /**
  *
@@ -19,11 +17,9 @@ public interface Student extends Serializable{
     public String getSurname();
     public String getName();
     public String getPatronymic();
-    public Group getGroup();
     public Date getEnrollmentDate();
     public void setSurname(String surname);
     public void setName(String name);
     public void setPatronymic(String patronymic);
-    public void setGroup(Group group);
     public void setEnrollmentDate(Date enrollmentDate);
 }
