@@ -3,10 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package StudentsGroups;
+package studentsgroups.model.impl;
 
+import studentsgroups.model.Group;
+import studentsgroups.model.Student;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 
 /**
@@ -15,16 +17,15 @@ import java.util.Iterator;
  */
 public class GroupImpl implements Group{
     
-    String numberOfGroup;
-    String faculty;
-    Collection<Student> students;
+    private String numberOfGroup;
+    private Collection<Student> students;
 
-    public GroupImpl(String numberOfGroup, String faculty) {
+    public GroupImpl(String numberOfGroup) {
         this.numberOfGroup = numberOfGroup;
-        this.faculty = faculty;
-        students = new HashSet<>();
+        students = new ArrayList<>();
     }   
     
+    @Override
     public int getSizeOfGroup() {
         return students.size();
     }
@@ -35,29 +36,9 @@ public class GroupImpl implements Group{
     }
 
     @Override
-    public String getFaculty() {
-        return faculty;
-    }
-
-    @Override
-    public Collection<Student> getStudents() {
-        return students;
-    }
-
-    @Override
     public void setNumberOfGroup(String numberOfGroup) {
         this.numberOfGroup = numberOfGroup;
-    }
-
-    @Override
-    public void setFaculty(String faculty) {
-        this.faculty = faculty;
-    }
-
-    @Override
-    public void setStudents(Collection<Student> students) {
-        this.students = students;
-    }    
+    } 
     
     @Override
      public void addStudent(Student newStudent){
@@ -69,6 +50,13 @@ public class GroupImpl implements Group{
         students.remove(exstudent);
     }
 
+    @Override
+    public Student[] getStudents() {
+        Student[] studentsArray = new Student[students.size()];
+        studentsArray = students.toArray(studentsArray);
+        return studentsArray;
+    }    
+    
     @Override
     public Iterator<Student> iterator() {
         return students.iterator();

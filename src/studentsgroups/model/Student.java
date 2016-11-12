@@ -3,15 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package StudentsGroups;
+package studentsgroups.model;
 
+import studentsgroups.model.Group;
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  *
  * @author Elvira
  */
-public interface Student {
+public interface Student extends Serializable{
     
     public String getSurname();
     public String getName();

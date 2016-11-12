@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package StudentsGroups;
+package studentsgroups.model.impl;
 
+import studentsgroups.model.Student;
+import studentsgroups.model.Group;
 import java.util.Date;
 
 /**
@@ -13,11 +15,11 @@ import java.util.Date;
  */
 public class StudentImpl implements Student{
     
-    String surname;
-    String name;
-    String patronymic;
-    Group group;
-    Date enrollmentDate;
+    private String surname;
+    private String name;
+    private String patronymic;
+    private Group group;
+    private Date enrollmentDate;
 
     public StudentImpl(String surname, String name, String patronymic, Group group, Date enrollmentDate) {
         this.surname = surname;

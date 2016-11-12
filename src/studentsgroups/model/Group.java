@@ -3,22 +3,22 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package StudentsGroups;
+package studentsgroups.model;
 
-import java.util.Collection;
+import studentsgroups.model.Student;
+import java.io.Serializable;
 
 /**
  *
  * @author Elvira
  */
-public interface Group extends Iterable<Student>{
+public interface Group extends Iterable<Student>, Serializable{
     
+    public int getSizeOfGroup();
     public String getNumberOfGroup();
-    public String getFaculty();
-    public Collection<Student> getStudents();
     public void setNumberOfGroup(String numberOfGroup);
-    public void setFaculty(String faculty);
-    public void setStudents(Collection<Student> students);
     public void addStudent(Student newStudent);
     public void deleteStudent(Student exstudent);
+    public Student[] getStudents();
+    
 }
