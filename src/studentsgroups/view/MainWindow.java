@@ -1,8 +1,8 @@
-package StudentsGroups.View;
+package studentsgroups.view;
 
-import StudentsGroups.Controller;
-import StudentsGroups.Data;
-import StudentsGroups.Group;
+import studentsgroups.controller.Controller;
+import studentsgroups.model.Data;
+import studentsgroups.model.Group;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;

@@ -1,4 +1,4 @@
-package StudentsGroups.View;
+package studentsgroups.view;
 
 import java.io.File;
 import java.io.IOException;

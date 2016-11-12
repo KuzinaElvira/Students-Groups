@@ -1,8 +1,6 @@
-package StudentsGroups.View;
+package studentsgroups.view;
 
 import javax.swing.*;
-import javax.swing.table.TableColumnModel;
-import javax.swing.table.TableModel;
 
 /**
  * Created by molish on 11.11.2016.
