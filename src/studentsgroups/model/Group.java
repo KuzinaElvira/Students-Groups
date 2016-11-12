@@ -5,9 +5,7 @@
  */
 package studentsgroups.model;
 
-import studentsgroups.model.Student;
 import java.io.Serializable;
-import studentsgroups.model.Student;
 
 /**
  *

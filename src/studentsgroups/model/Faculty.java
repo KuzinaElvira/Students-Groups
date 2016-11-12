@@ -17,7 +17,7 @@ public interface Faculty  extends Iterable<Group>, Serializable{
     public String getFacultyName();
     public void setFacultyName(String facultyName);
     public void addGroup(Group group);
-    public void deleteGroup(Group group);
+    public void deleteGroup(Group exgroup);
     public Group[] getGroups();   
     
 }

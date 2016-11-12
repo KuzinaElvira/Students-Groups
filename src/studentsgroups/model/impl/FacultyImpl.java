@@ -46,8 +46,8 @@ public class FacultyImpl implements Faculty{
     }
 
     @Override
-    public void deleteGroup(Group group) {
-        groups.remove(group);
+    public void deleteGroup(Group exgroup) {
+        groups.remove(exgroup);
     }
 
     @Override

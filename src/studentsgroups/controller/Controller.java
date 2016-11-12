@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Collection;
+import java.util.Date;
 import java.util.LinkedList;
 import studentsgroups.controller.utils.CheckMatching;
 import studentsgroups.model.Group;
@@ -33,23 +34,22 @@ public class Controller {
     /**
      * Сериализация
      * @param file
-     * @param faculty
      * @throws IOException 
      */
-    public static void writeToFile(File file, Faculty faculty) throws IOException{
+    public void writeToFile(File file) throws IOException{
         FileOutputStream fos = new FileOutputStream(file);
         ObjectOutputStream oos = new ObjectOutputStream(fos);
         oos.writeObject(faculty);
         oos.close();
     }
+    
     /**
      * Сериализация
      * @param fileName
-     * @param faculty
      * @throws IOException 
      */
-    public static void writeToFile(String fileName, Faculty faculty) throws IOException{
-        writeToFile(new File(fileName), faculty);
+    public void writeToFile(String fileName) throws IOException{
+        writeToFile(new File(fileName));
     }
     /**
      * Десериализация
@@ -76,11 +76,12 @@ public class Controller {
     public static Faculty readFromFile(String fileName) throws IOException, ClassNotFoundException{
         return readFromFile(new File(fileName));
     }
-
-    public Faculty getFaculty() {
-        return faculty;
-    }
     
+    /**
+     * Поиск данных в соответствии с шаблоном
+     * @param pattern
+     * @return 
+     */
     public Collection<Group> getGroupsByPattern(String pattern){
         Collection<Group> groupsByPattern = new LinkedList<>();
         CheckMatching checker = new CheckMatching(pattern);
@@ -92,6 +93,11 @@ public class Controller {
         return groupsByPattern;
     }
     
+    /**
+     * Поиск данных в соответствии с шаблоном
+     * @param pattern
+     * @return 
+     */
     public Collection<Student> getStudentsByPattern(String pattern){
         Collection<Student> studentsByPattern = new LinkedList<>();
         CheckMatching checker = new CheckMatching(pattern);
@@ -103,11 +109,56 @@ public class Controller {
             }
         }
         return studentsByPattern;
-    } 
+    }
     
+    /**
+     * Добавление студента в группу
+     * @param group
+     * @param student 
+     */
     public void addStudent(Group group, Student student){
         group.addStudent(student);
     }
     
+    /**
+     * Удаление студента из группы
+     * @param group
+     * @param exstudent 
+     */
+    public void deleteStudent(Group group, Student exstudent){
+        group.deleteStudent(exstudent);
+    }
     
+    /**
+     * Просмотр группы
+     * @param group
+     * @return 
+     */
+    public Student[] getStudents(Group group){
+        return group.getStudents();
+    }
+    
+    /**
+     * Добавление группы
+     * @param group 
+     */
+    public void addGroup(Group group){
+        faculty.addGroup(group);
+    }
+    
+    /**
+     * Удаление группы
+     * @param exgroup 
+     */
+    public void deleteGroup(Group exgroup){
+        faculty.deleteGroup(exgroup);
+    }
+    
+    /**
+     * Просмотр групп факультета
+     * @return 
+     */
+    public Group[] getGroups(){
+        return faculty.getGroups();
+    }
 }
