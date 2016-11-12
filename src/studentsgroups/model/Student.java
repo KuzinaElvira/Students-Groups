@@ -8,6 +8,7 @@ package studentsgroups.model;
 import studentsgroups.model.Group;
 import java.io.Serializable;
 import java.util.Date;
+import studentsgroups.model.Group;
 
 /**
  *
