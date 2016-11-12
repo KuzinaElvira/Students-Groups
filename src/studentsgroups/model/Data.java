@@ -1,7 +1,6 @@
-package StudentsGroups;
+package studentsgroups.model;
 
 import java.util.Collection;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 
 /**
