@@ -10,15 +10,24 @@ import studentsgroups.model.Group;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import javax.xml.bind.annotation.XmlElement;
+//import javax.xml.bind.annotation.XmlElements;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
  * @author Elvira
  */
+@XmlRootElement
 public class FacultyImpl implements Faculty{
     
     private String facultyName;
+    @XmlElement
     private Collection<Group> groups;
+    
+    public FacultyImpl(){
+        
+    }
     
     public FacultyImpl(String facultyName){
         this.facultyName = facultyName;

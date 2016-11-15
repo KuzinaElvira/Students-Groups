@@ -6,7 +6,6 @@
 package studentsgroups.model.impl;
 
 import studentsgroups.model.Student;
-import studentsgroups.model.Group;
 import java.util.Date;
 
 /**
@@ -15,18 +14,25 @@ import java.util.Date;
  */
 public class StudentImpl implements Student{
     
+    private final int idStudent;
     private String surname;
     private String name;
     private String patronymic;
     private Date enrollmentDate;
 
-    public StudentImpl(String surname, String name, String patronymic, Date enrollmentDate) {
+    public StudentImpl(int idStudent, String surname, String name, String patronymic, Date enrollmentDate) {
+        this.idStudent = idStudent;
         this.surname = surname;
         this.name = name;
         this.patronymic = patronymic;
         this.enrollmentDate = enrollmentDate;
     }    
 
+    @Override
+    public int getIdStudent() {
+        return idStudent;
+    }
+    
     @Override
     public String getSurname() {
         return surname;

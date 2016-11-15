@@ -8,6 +8,7 @@ package studentsgroups.controller;
 import studentsgroups.model.Faculty;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -15,9 +16,14 @@ import java.io.ObjectOutputStream;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
-import studentsgroups.controller.utils.CheckMatching;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+import studentsgroups.controller.utils.*;
 import studentsgroups.model.Group;
 import studentsgroups.model.Student;
+import studentsgroups.model.impl.FacultyImpl;
 
 /**
  *
@@ -29,6 +35,12 @@ public class Controller {
 
     public Controller(Faculty faculty) {
         this.faculty = faculty;
+    }    
+    
+    private void isValidString(String str){
+        if(str == null || str.equals("")){
+            throw new NotValidValueException("Введенное значение некорректно.");
+        }
     }
     
     /**
@@ -160,5 +172,58 @@ public class Controller {
      */
     public Group[] getGroups(){
         return faculty.getGroups();
+    }
+    
+    /**
+     * Изменение студента
+     * @param group
+     * @param idStudent
+     * @param surname
+     * @param name
+     * @param patronymic
+     * @param enrollmentDate 
+     * @return  
+     */
+    public boolean setStudent(Group group, int idStudent, String surname, String name, String patronymic, Date enrollmentDate) {
+        isValidString(surname);
+        isValidString(name);
+        isValidString(patronymic);
+        for (Student student : group) {
+            if (student.getIdStudent() == idStudent) {
+                student.setSurname(surname);
+                student.setName(name);
+                student.setPatronymic(patronymic);
+                student.setEnrollmentDate(enrollmentDate);
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Запись в xml файл. ПОКА НЕ РАБОТАЕТ
+     * @param file
+     * @throws JAXBException
+     * @throws FileNotFoundException 
+     */
+    public void writeToXML(File file) throws JAXBException, FileNotFoundException{
+        JAXBContext context = JAXBContext.newInstance(FacultyImpl.class);
+        Marshaller marshaller = context.createMarshaller();
+        FileOutputStream fos = new FileOutputStream(file);
+        marshaller.marshal(faculty, fos);
+    }
+    
+    /**
+     * Чтение из xml файла. ПОКА НЕ РАБОТАЕТ
+     * @param file
+     * @return
+     * @throws FileNotFoundException
+     * @throws JAXBException 
+     */
+    public Faculty readFromXML(File file) throws FileNotFoundException, JAXBException{
+        JAXBContext context = JAXBContext.newInstance(FacultyImpl.class);
+        Unmarshaller unmarshaller = context.createUnmarshaller();
+        FileInputStream fis = new FileInputStream(file);
+        return (Faculty) unmarshaller.unmarshal(fis);
     }
 }

@@ -14,6 +14,7 @@ import java.util.Date;
  */
 public interface Student extends Serializable{
     
+    public int getIdStudent();
     public String getSurname();
     public String getName();
     public String getPatronymic();

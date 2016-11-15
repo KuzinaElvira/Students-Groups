@@ -10,6 +10,7 @@ import studentsgroups.model.Student;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import javax.xml.bind.annotation.XmlElement;
 
 /**
  *
@@ -18,6 +19,7 @@ import java.util.Iterator;
 public class GroupImpl implements Group{
     
     private String numberOfGroup;
+    @XmlElement
     private Collection<Student> students;
 
     public GroupImpl(String numberOfGroup) {
