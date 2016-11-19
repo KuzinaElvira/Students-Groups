@@ -226,4 +226,22 @@ public class Controller {
         FileInputStream fis = new FileInputStream(file);
         return (Faculty) unmarshaller.unmarshal(fis);
     }
+
+    //region Need to realize
+    //желательно чтобы если группа не найдена выбрасывал новую группу с пустым именем
+    public Group getGroup(String numberOfgroup){
+        return null;
+    }
+    //просто измени сигнатуру readToFile и readFromXML метода ну и еще чтобы он овый объект считывал в себя
+    public void readFile(File file) throws IOException, ClassNotFoundException{}
+    public void readXML(File file) throws FileNotFoundException, JAXBException{}
+    public boolean setGroupName(String oldName, String newName) throws NotValidValueException{return true;};
+    //по сути те же методы что уже есть только возвращают массивы а не коллекции
+    public Student[] getStudentByPattern(String pattern){
+        return new Student[0];
+    }
+    public Group[] getGroupByPattern(String pattern){
+        return new Group[0];
+    }
+    //endregion
 }
