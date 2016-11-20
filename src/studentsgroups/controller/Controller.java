@@ -13,6 +13,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
@@ -24,6 +25,7 @@ import studentsgroups.controller.utils.*;
 import studentsgroups.model.Group;
 import studentsgroups.model.Student;
 import studentsgroups.model.impl.FacultyImpl;
+import studentsgroups.model.impl.StudentImpl;
 
 /**
  *
@@ -233,15 +235,21 @@ public class Controller {
         return null;
     }
     //просто измени сигнатуру readToFile и readFromXML метода ну и еще чтобы он овый объект считывал в себя
-    public void readFile(File file) throws IOException, ClassNotFoundException{}
-    public void readXML(File file) throws FileNotFoundException, JAXBException{}
+    public void readFile(File file) throws IOException, ClassNotFoundException{readFromFile(file);}
+    public void readXML(File file) throws FileNotFoundException, JAXBException{readFromXML(file);}
     public boolean setGroupName(String oldName, String newName) throws NotValidValueException{return true;};
     //по сути те же методы что уже есть только возвращают массивы а не коллекции
-    public Student[] getStudentByPattern(String pattern){
+    public Student[] getStudentByPattern(Group group, String pattern){
         return new Student[0];
     }
     public Group[] getGroupByPattern(String pattern){
         return new Group[0];
+    }
+    public Student getStudentById(Group group, int id){
+        return new StudentImpl(0, "", "", "", Calendar.getInstance().getTime());
+    };
+    public void addStudent(Group group, int id, String name, String surname, String patronymic, Date enrollmentDate){
+
     }
     //endregion
 }
