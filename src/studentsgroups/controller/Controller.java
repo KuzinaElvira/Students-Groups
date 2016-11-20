@@ -232,36 +232,24 @@ public class Controller {
     //region Need to realize
     //желательно чтобы если группа не найдена выбрасывал новую группу с пустым именем
     public Group getGroup(String numberOfgroup){
-        for(Group group : faculty.getGroups()){
-            if(group.getNumberOfGroup().equals(numberOfgroup))
-                return group;
-        }
         return null;
     }
     //просто измени сигнатуру readToFile и readFromXML метода ну и еще чтобы он овый объект считывал в себя
     public void readFile(File file) throws IOException, ClassNotFoundException{readFromFile(file);}
     public void readXML(File file) throws FileNotFoundException, JAXBException{readFromXML(file);}
-    public boolean setGroupName(String oldName, String newName) throws NotValidValueException{getGroup(oldName).setNumberOfGroup(newName); return true;};
+    public boolean setGroupName(String oldName, String newName) throws NotValidValueException{return true;};
     //по сути те же методы что уже есть только возвращают массивы а не коллекции
     public Student[] getStudentByPattern(Group group, String pattern){
-        Collection<Student> ret = getStudentsByPattern(pattern);
-        Student[] result = new Student[ret.size()];
-        return ret.toArray(result);
+        return new Student[0];
     }
     public Group[] getGroupByPattern(String pattern){
-        Collection<Group> ret = getGroupsByPattern(pattern);
-        Group[] result = new Group[ret.size()];
-        return ret.toArray(result);
+        return new Group[0];
     }
     public Student getStudentById(Group group, int id){
-        for(Student stud : group){
-            if(stud.getIdStudent() == id)
-                return stud;
-        }
         return new StudentImpl(0, "", "", "", Calendar.getInstance().getTime());
     };
     public void addStudent(Group group, int id, String name, String surname, String patronymic, Date enrollmentDate){
-        addStudent(group, new StudentImpl(id, name, surname, patronymic, enrollmentDate));
+
     }
     //endregion
 }
