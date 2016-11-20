@@ -7,19 +7,26 @@ package studentsgroups.model.impl;
 
 import studentsgroups.model.Student;
 import java.util.Date;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  *
  * @author Эльвира
  */
+@XmlType(propOrder = {"idStudent", "surname", "name", "patronymic", "enrollmentDate"})
 public class StudentImpl implements Student{
     
-    private final int idStudent;
+    private int idStudent;
     private String surname;
     private String name;
     private String patronymic;
     private Date enrollmentDate;
 
+    public StudentImpl(){
+        
+    }
+    
     public StudentImpl(int idStudent, String surname, String name, String patronymic, Date enrollmentDate) {
         this.idStudent = idStudent;
         this.surname = surname;
@@ -29,26 +36,31 @@ public class StudentImpl implements Student{
     }    
 
     @Override
+    @XmlAttribute(name = "id")
     public int getIdStudent() {
         return idStudent;
     }
     
     @Override
+    @XmlAttribute
     public String getSurname() {
         return surname;
     }
 
     @Override
+    @XmlAttribute
     public String getName() {
         return name;
     }
 
     @Override
+    @XmlAttribute
     public String getPatronymic() {
         return patronymic;
     }
 
     @Override
+    @XmlAttribute
     public Date getEnrollmentDate() {
         return enrollmentDate;
     }

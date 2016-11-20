@@ -10,18 +10,30 @@ import studentsgroups.model.Student;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlElements;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  *
  * @author Эльвира
  */
+@XmlType(name = "group", propOrder = {"numberOfGroup", "students"})
 public class GroupImpl implements Group{
     
     private String numberOfGroup;
-    @XmlElement
+    @XmlElementWrapper(name = "students")
+    @XmlElements({
+        @XmlElement(type = StudentImpl.class, name = "student")
+    })
     private Collection<Student> students;
 
+    public GroupImpl(){
+        
+    }
+    
     public GroupImpl(String numberOfGroup) {
         this.numberOfGroup = numberOfGroup;
         students = new ArrayList<>();
@@ -33,6 +45,7 @@ public class GroupImpl implements Group{
     }
 
     @Override
+    @XmlAttribute
     public String getNumberOfGroup() {
         return numberOfGroup;
     }

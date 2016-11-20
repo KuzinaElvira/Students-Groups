@@ -10,19 +10,26 @@ import studentsgroups.model.Group;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-//import javax.xml.bind.annotation.XmlElements;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  *
  * @author Elvira
  */
 @XmlRootElement
+@XmlType(name = "faculty", propOrder = {"facultyName", "groups"})
 public class FacultyImpl implements Faculty{
-    
+        
     private String facultyName;
-    @XmlElement
+    @XmlElementWrapper(name = "groups")
+    @XmlElements({
+        @XmlElement(type = GroupImpl.class, name = "group")
+    })
     private Collection<Group> groups;
     
     public FacultyImpl(){
@@ -40,6 +47,7 @@ public class FacultyImpl implements Faculty{
     }
 
     @Override
+    @XmlAttribute
     public String getFacultyName() {
         return facultyName;
     }

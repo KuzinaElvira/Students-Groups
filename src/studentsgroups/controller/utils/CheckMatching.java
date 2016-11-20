@@ -24,7 +24,12 @@ public class CheckMatching {
         pattern = Pattern.compile(regExp);
     }
     
-    public boolean isMatches(String str) {        
+    public boolean isMatches(String str) {
+        if(!(str.contains(".") || str.contains("?") || str.contains("*") || str.contains("+") || str.contains("$") 
+            || str.contains("^") || str.contains("(") || str.contains(")") || str.contains("[") || str.contains("]")
+            || str.contains("{") || str.contains("}") || str.contains("\\"))){
+                str = "*" + str + "*";
+        }
         Matcher m = pattern.matcher(str);
         return m.matches();
     }

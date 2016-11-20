@@ -34,16 +34,25 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException, TransformerException, JAXBException {
+        
         /*
-        String pathForReading = "C:\\Users\\Elvira\\Documents\\NetBeansProjects\\Students-Group\\src\\testFac.xml";
+        String pathForReading = "C:\\Users\\Elvira\\Documents\\NetBeansProjects\\Students-Groups\\src\\testFac.xml";
         String pathForWriting = pathForReading;
         File fileForWriting = new File(pathForWriting);
         File fileForReading = new File(pathForReading);
         Faculty fac = new FacultyImpl("FIST");
         Group group = new GroupImpl("TP-666");
-        Student student = new StudentImpl(1, "Ivanova", "Yana", "Alexandrovna", Date.from(Instant.now()));
+        Student student = new StudentImpl(0, "Ivanova", "Yana", "Alexandrovna", Date.from(Instant.now()));
+        Student student1 = new StudentImpl(1, "Ivanova2", "Yana", "Alexandrovna", Date.from(Instant.now()));
         group.addStudent(student);
+        group.addStudent(student1);
         fac.addGroup(group);
+        Group group2 = new GroupImpl("Agents-007");
+        Student student2 = new StudentImpl(2, "Ulyanova", "Christina", "Eduardovna", Date.from(Instant.now()));
+        Student student3 = new StudentImpl(3, "Ulyanova2", "Christina", "Eduardovna", Date.from(Instant.now()));
+        group2.addStudent(student2);
+        group2.addStudent(student3);
+        fac.addGroup(group2);
         Controller contr = new Controller(fac);
         contr.writeToXML(fileForWriting);
         */

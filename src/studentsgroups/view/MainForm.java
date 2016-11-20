@@ -120,7 +120,7 @@ public class MainForm extends JFrame {
             @Override
             public void windowOpened(WindowEvent e) {
                 try {
-                    Controller.readFromFile("state.bin");
+                    Controller.readFile("state.bin");
                 } catch (IOException | ClassNotFoundException ex) {
                     ex.printStackTrace();
                 }

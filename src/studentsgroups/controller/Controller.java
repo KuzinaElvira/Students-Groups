@@ -13,7 +13,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
@@ -25,6 +24,7 @@ import studentsgroups.controller.utils.*;
 import studentsgroups.model.Group;
 import studentsgroups.model.Student;
 import studentsgroups.model.impl.FacultyImpl;
+import studentsgroups.model.impl.GroupImpl;
 import studentsgroups.model.impl.StudentImpl;
 
 /**
@@ -37,12 +37,28 @@ public class Controller {
 
     public Controller(Faculty faculty) {
         this.faculty = faculty;
-    }    
+    }  
     
+    public Faculty getFaculty(){
+        return faculty;
+    }
+    
+    /**
+     * Проверка строк на наличие значения
+     * @param str 
+     */
     private void isValidString(String str){
         if(str == null || str.equals("")){
             throw new NotValidValueException("Введенное значение некорректно.");
         }
+    }
+    
+    /**
+     * Получить имя факультета
+     * @return 
+     */
+    public String getFacultyName(){
+        return faculty.getFacultyName();
     }
     
     /**
@@ -68,27 +84,25 @@ public class Controller {
     /**
      * Десериализация
      * @param file
-     * @return
      * @throws IOException
      * @throws ClassNotFoundException 
      */
-    public static Faculty readFromFile(File file) throws IOException, ClassNotFoundException{
+    public void readFile(File file) throws IOException, ClassNotFoundException{
         FileInputStream fis = new FileInputStream(file);
         ObjectInputStream ois = new ObjectInputStream(fis);
-        Faculty faculty =  (Faculty) ois.readObject();
+        Faculty fac =  (Faculty) ois.readObject();
         ois.close();
-        return faculty;
+        faculty = fac;
     }
     
     /**
      * Десериализация
      * @param fileName
-     * @return
      * @throws IOException
      * @throws ClassNotFoundException 
      */
-    public static Faculty readFromFile(String fileName) throws IOException, ClassNotFoundException{
-        return readFromFile(new File(fileName));
+    public void readFile(String fileName) throws IOException, ClassNotFoundException{
+        readFile(new File(fileName));
     }
     
     /**
@@ -125,13 +139,61 @@ public class Controller {
         return studentsByPattern;
     }
     
+     /**
+     * Поиск данных в соответствии с шаблоном
+     * @param group
+     * @param pattern
+     * @return 
+     */
+    public Student[] getStudentByPattern(Group group, String pattern) {
+        Collection<Student> studentsByPattern = new LinkedList<>();
+        CheckMatching checker = new CheckMatching(pattern);
+        for (Student student : group) {
+            if (checker.isMatches(student.getSurname()) || checker.isMatches(student.getName()) || checker.isMatches(student.getPatronymic())) {
+                studentsByPattern.add(student);
+            }
+        }
+        Student[] studs = new Student[studentsByPattern.size()];
+        return studentsByPattern.toArray(studs);
+    }
+    
+    /**
+     * Поиск данных в соответствии с шаблоном
+     * @param pattern
+     * @return 
+     */
+    public Group[] getGroupByPattern(String pattern){
+        Collection<Group> groups = getGroupsByPattern(pattern);
+        Group[] groupss = new Group[groups.size()];        
+        return groups.toArray(groupss);
+    }
+    
     /**
      * Добавление студента в группу
      * @param group
      * @param student 
      */
-    public void addStudent(Group group, Student student){
+    public void addStudent(Group group, Student student) {
+        for (Student stud : group) {
+            if (stud.getIdStudent() == student.getIdStudent()) {
+                throw new ObjectExistsException("Вы не можете добавить уже существующего студента.");
+            }
+        }
         group.addStudent(student);
+    }
+    
+    /**
+     * Добавление студента в группу
+     * @param group
+     * @param id
+     * @param name
+     * @param surname
+     * @param patronymic
+     * @param enrollmentDate 
+     */
+    public void addStudent(Group group, int id, String name, String surname, String patronymic, Date enrollmentDate){
+        Student newStudent = new StudentImpl(id, surname, name, patronymic, enrollmentDate);
+        addStudent(group, newStudent);
     }
     
     /**
@@ -141,6 +203,21 @@ public class Controller {
      */
     public void deleteStudent(Group group, Student exstudent){
         group.deleteStudent(exstudent);
+    }
+    
+    /**
+     * Получение студента по его ID
+     * @param group
+     * @param id
+     * @return 
+     */
+    public Student getStudentById(Group group, int id){
+        for (Student stud : group) {
+            if (stud.getIdStudent() == id) {
+                return stud;
+            }
+        }
+        throw new ObjectNotFoundException("Студент не найден.");
     }
     
     /**
@@ -166,6 +243,20 @@ public class Controller {
      */
     public void deleteGroup(Group exgroup){
         faculty.deleteGroup(exgroup);
+    }
+    
+    /**
+     * Поиск группы по ее номеру
+     * @param numberOfgroup
+     * @return 
+     */
+    public Group getGroup(String numberOfgroup){
+        for(Group group : faculty){
+            if(group.getNumberOfGroup().equals(numberOfgroup)){
+                return group;
+            }
+        }
+        return new GroupImpl(numberOfgroup);
     }
     
     /**
@@ -199,11 +290,29 @@ public class Controller {
                 return true;
             }
         }
-        return false;
+        throw new ObjectNotFoundException("Студент не найден.");
     }
     
     /**
-     * Запись в xml файл. ПОКА НЕ РАБОТАЕТ
+     * Изменение имени группы
+     * @param oldName
+     * @param newName
+     * @return
+     * @throws NotValidValueException 
+     */
+    public boolean setGroupName(String oldName, String newName) throws NotValidValueException{
+        isValidString(newName);
+        for(Group group : faculty){
+            if(group.getNumberOfGroup().equals(oldName)){
+                group.setNumberOfGroup(newName);
+                return true;
+            }
+        }
+        throw new ObjectNotFoundException("Группа не найдена.");
+    }
+    
+    /**
+     * Запись в xml файл.
      * @param file
      * @throws JAXBException
      * @throws FileNotFoundException 
@@ -212,44 +321,21 @@ public class Controller {
         JAXBContext context = JAXBContext.newInstance(FacultyImpl.class);
         Marshaller marshaller = context.createMarshaller();
         FileOutputStream fos = new FileOutputStream(file);
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
         marshaller.marshal(faculty, fos);
     }
     
     /**
-     * Чтение из xml файла. ПОКА НЕ РАБОТАЕТ
+     * Чтение из xml файла.
      * @param file
-     * @return
      * @throws FileNotFoundException
      * @throws JAXBException 
      */
-    public Faculty readFromXML(File file) throws FileNotFoundException, JAXBException{
+    public void readXML(File file) throws FileNotFoundException, JAXBException{
         JAXBContext context = JAXBContext.newInstance(FacultyImpl.class);
         Unmarshaller unmarshaller = context.createUnmarshaller();
         FileInputStream fis = new FileInputStream(file);
-        return (Faculty) unmarshaller.unmarshal(fis);
+        faculty = (Faculty) unmarshaller.unmarshal(fis);
     }
-
-    //region Need to realize
-    //желательно чтобы если группа не найдена выбрасывал новую группу с пустым именем
-    public Group getGroup(String numberOfgroup){
-        return null;
-    }
-    //просто измени сигнатуру readToFile и readFromXML метода ну и еще чтобы он овый объект считывал в себя
-    public void readFile(File file) throws IOException, ClassNotFoundException{readFromFile(file);}
-    public void readXML(File file) throws FileNotFoundException, JAXBException{readFromXML(file);}
-    public boolean setGroupName(String oldName, String newName) throws NotValidValueException{return true;};
-    //по сути те же методы что уже есть только возвращают массивы а не коллекции
-    public Student[] getStudentByPattern(Group group, String pattern){
-        return new Student[0];
-    }
-    public Group[] getGroupByPattern(String pattern){
-        return new Group[0];
-    }
-    public Student getStudentById(Group group, int id){
-        return new StudentImpl(0, "", "", "", Calendar.getInstance().getTime());
-    };
-    public void addStudent(Group group, int id, String name, String surname, String patronymic, Date enrollmentDate){
-
-    }
-    //endregion
+    
 }

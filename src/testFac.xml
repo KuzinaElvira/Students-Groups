@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<facultyImpl facultyName="FIST">
+    <groups>
+        <group numberOfGroup="TP-666">
+            <students>
+                <student id="0" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-20T20:50:02.435+04:00"/>
+                <student id="1" surname="Ivanova2" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-20T20:50:02.437+04:00"/>
+            </students>
+        </group>
+        <group numberOfGroup="Agents-007">
+            <students>
+                <student id="2" surname="Ulyanova" name="Christina" patronymic="Eduardovna" enrollmentDate="2016-11-20T20:50:02.437+04:00"/>
+                <student id="3" surname="Ulyanova2" name="Christina" patronymic="Eduardovna" enrollmentDate="2016-11-20T20:50:02.437+04:00"/>
+            </students>
+        </group>
+    </groups>
+</facultyImpl>
