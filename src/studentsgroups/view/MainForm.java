@@ -7,6 +7,7 @@ import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
 import net.sourceforge.jdatepicker.impl.UtilDateModel;
 import studentsgroups.controller.Controller;
 import studentsgroups.controller.utils.NotValidValueException;
+import studentsgroups.controller.utils.ObjectExistsException;
 import studentsgroups.model.Group;
 import studentsgroups.model.Student;
 import studentsgroups.model.impl.GroupImpl;
@@ -53,8 +54,22 @@ public class MainForm extends JFrame {
                 int result = fileChooser.showOpenDialog(null);
                 if (result == JFileChooser.APPROVE_OPTION) {
                     reader.read(fileChooser.getSelectedFile());
+                    Group[] groups = controller.getGroups();
+                    if(groups.length > 0){
+                        refreshTableGroupsData(groups);
+                        groupDataJtable.setRowSelectionInterval(0,0);
+                        currentGroup = groups[0];
+                    }else {
+                        refreshTableGroupsData(groups);
+                        currentGroup = FREE_GROUP;
+                    }
+                    groupNameJLabel.setText(currentGroup.getNumberOfGroup());
+                    refreshTableStudentData(currentGroup.getStudents());
                 }
-            }catch (IOException | ClassNotFoundException | JAXBException ex){ex.printStackTrace();}
+            }catch (IOException | ClassNotFoundException | JAXBException ex){
+                ex.printStackTrace();
+                showErrorMessage(mainWindow, ex.getMessage());
+            }
         }
     }
     private class WriterActionListener implements ActionListener{
@@ -74,7 +89,10 @@ public class MainForm extends JFrame {
                     writer.write(fileChooser.getSelectedFile());
                 }
             }catch (FileNotFoundException ex){ex.printStackTrace();}
-            catch (IOException | JAXBException ex){ex.printStackTrace();}
+            catch (IOException | JAXBException ex){
+                ex.printStackTrace();
+                showErrorMessage(mainWindow, ex.getMessage());
+            }
         }
     }
 
@@ -120,7 +138,18 @@ public class MainForm extends JFrame {
             @Override
             public void windowOpened(WindowEvent e) {
                 try {
-                    Controller.readFile("state.bin");
+                    controller.readFile("state.bin");
+                    Group[] groups = controller.getGroups();
+                    if(groups.length > 0){
+                        refreshTableGroupsData(groups);
+                        groupDataJtable.setRowSelectionInterval(0,0);
+                        currentGroup = groups[0];
+                    }else {
+                        refreshTableGroupsData(groups);
+                        currentGroup = FREE_GROUP;
+                    }
+                    groupNameJLabel.setText(currentGroup.getNumberOfGroup());
+                    refreshTableStudentData(currentGroup.getStudents());
                 } catch (IOException | ClassNotFoundException ex) {
                     ex.printStackTrace();
                 }
@@ -360,7 +389,9 @@ public class MainForm extends JFrame {
                             addGroupDialog.dispose();
                         } catch (NotValidValueException ex) {
                             ex.printStackTrace();
-                            showErrorMessage(addGroupDialog, "Entered wrong group number", 150, 150, 200, 300);
+                            showErrorMessage(addGroupDialog, "Entered wrong group number");
+                        }catch (ObjectExistsException ex){
+                            showErrorMessage(addGroupDialog, "Group already exists");
                         }
                     }
                 });
@@ -478,7 +509,10 @@ public class MainForm extends JFrame {
                                 changeGroupDialog.dispose();
                             } catch (NotValidValueException ex) {
                                 ex.printStackTrace();
-                                //TODO: сделать окно ошибки
+                                showErrorMessage(changeGroupDialog, "Wrong group name entered!");
+                            } catch (ObjectExistsException ex){
+                                ex.printStackTrace();
+                                showErrorMessage(changeGroupDialog, "Group already exists");
                             }
                         }
                     });
@@ -584,9 +618,13 @@ public class MainForm extends JFrame {
                                 addStudentDialog.dispose();
                             } catch (NotValidValueException ex) {
                                 ex.printStackTrace();
-                                //TODO: сделать окно ошибки
+                                showErrorMessage(addStudentDialog, "Some data does not entered!");
                             }catch (NumberFormatException ex){
                                 ex.printStackTrace();
+                                showErrorMessage(addStudentDialog, "ID does not entered");
+                            }catch (ObjectExistsException ex){
+                                ex.printStackTrace();
+                                showErrorMessage(addStudentDialog, "Student already exists");
                             }
                         }
                     });
@@ -720,9 +758,10 @@ public class MainForm extends JFrame {
                                 changeStudentDialog.dispose();
                             } catch (NotValidValueException ex) {
                                 ex.printStackTrace();
-                                //TODO: сделать окно ошибки
+                                showErrorMessage(changeStudentDialog, "Wrong data entered!");
                             }catch (NumberFormatException ex){
                                 ex.printStackTrace();
+                                showErrorMessage(changeStudentDialog, "Wrong ID entered!");
                             }
                         }
                     });
@@ -838,10 +877,10 @@ public class MainForm extends JFrame {
             studentDataJTable.setRowSelectionInterval(0,0);
     }
 
-    private void showErrorMessage(JDialog owner, String message, int x, int y, int width, int height){
+    private void showErrorMessage(Component owner, String message){
         JDialog errorDialog = new JDialog();
         errorDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-        errorDialog.setBounds(x, y, width, height);
+        errorDialog.setBounds(150, 150, 0, 0);
         JButton okButton = new JButton("OK");
         owner.setEnabled(false);
         errorDialog.addWindowListener(new WindowListener() {
@@ -892,6 +931,7 @@ public class MainForm extends JFrame {
         errorContainer.setLayout(new GridLayout(2, 1, 2, 2));
         errorContainer.add(new JLabel(message));
         errorContainer.add(okButton);
+        errorDialog.pack();
         errorDialog.setVisible(true);
     }
 
