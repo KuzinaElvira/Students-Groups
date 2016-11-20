@@ -243,11 +243,15 @@ public class Controller {
     public void readXML(File file) throws FileNotFoundException, JAXBException{readFromXML(file);}
     public boolean setGroupName(String oldName, String newName) throws NotValidValueException{getGroup(oldName).setNumberOfGroup(newName); return true;};
     //по сути те же методы что уже есть только возвращают массивы а не коллекции
-    public Student[] getStudentByPattern(String pattern){
-        return (Student[])getStudentsByPattern(pattern).toArray();
+    public Student[] getStudentByPattern(Group group, String pattern){
+        Collection<Student> ret = getStudentsByPattern(pattern);
+        Student[] result = new Student[ret.size()];
+        return ret.toArray(result);
     }
     public Group[] getGroupByPattern(String pattern){
-        return (Group[])getGroupsByPattern(pattern).toArray();
+        Collection<Group> ret = getGroupsByPattern(pattern);
+        Group[] result = new Group[ret.size()];
+        return ret.toArray(result);
     }
     public Student getStudentById(Group group, int id){
         for(Student stud : group){

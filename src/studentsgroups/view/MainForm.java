@@ -187,8 +187,72 @@ public class MainForm extends JFrame {
         mainMenuBar.add(fileMenu);
         mainMenuBar.add(searchGroupJLabel);
         mainMenuBar.add(groupSearchTextField);
+        groupSearchTextField.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                String text = groupSearchTextField.getText();
+                if (text.equals("")) {
+                    int selectedRow = groupDataJtable.getSelectedRow();
+                    refreshTableGroupsData(controller.getGroups());
+                    if(selectedRow == -1){
+                        groupDataJtable.setRowSelectionInterval(0,0);
+                        currentGroup = controller.getGroup(groupDataJtable.getValueAt(0,0).toString());
+                    }else {
+                        groupDataJtable.setRowSelectionInterval(selectedRow, selectedRow);
+                        currentGroup = controller.getGroup(groupDataJtable.getValueAt(selectedRow,0).toString());
+                    }
+                    refreshTableStudentData(currentGroup.getStudents());
+                    groupNameJLabel.setText(currentGroup.getNumberOfGroup());
+                }else {
+                    Group[] currentGroups = controller.getGroupByPattern(text);
+                    refreshTableGroupsData(currentGroups);
+                    if (currentGroups.length != 0) {
+                        currentGroup = currentGroups[0];
+                        refreshTableStudentData(currentGroup.getStudents());
+                        groupNameJLabel.setText(currentGroup.getNumberOfGroup());
+                        groupDataJtable.setRowSelectionInterval(0, 0);
+                    } else {
+                        currentGroup = FREE_GROUP;
+                        groupNameJLabel.setText(currentGroup.getNumberOfGroup());
+                        refreshTableStudentData(currentGroup.getStudents());
+                    }
+                }
+            }
+        });
         mainMenuBar.add(searchStudentJLabel);
         mainMenuBar.add(studentSearchTextField);
+        studentSearchTextField.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                //TODO: don't work
+                String text = studentSearchTextField.getText();
+                if(text.equals("")){
+                    refreshTableStudentData(currentGroup.getStudents());
+                }else {
+                    refreshTableStudentData(controller.getStudentByPattern(currentGroup, text));
+                }
+            }
+        });
         fileMenu.add(serializationMenu);
         fileMenu.add(XMLMenu);
         fileMenu.addSeparator();
@@ -271,17 +335,32 @@ public class MainForm extends JFrame {
                         try {
                             Group addingGroup = new GroupImpl(groupNameTextField.getText());
                             controller.addGroup(addingGroup);
-                            refreshTableGroupsData(controller.getGroups());
-                            currentGroup = addingGroup;
-                            groupNameJLabel.setText(currentGroup.getNumberOfGroup());
-                            refreshTableStudentData(currentGroup.getStudents());
-                            int newROwCount = groupDataJtable.getRowCount() - 1;
-                            groupDataJtable.setRowSelectionInterval(newROwCount, newROwCount);
+                            if(groupSearchTextField.getText().equals("")) {
+                                refreshTableGroupsData(controller.getGroups());
+                                currentGroup = addingGroup;
+                                groupNameJLabel.setText(currentGroup.getNumberOfGroup());
+                                refreshTableStudentData(currentGroup.getStudents());
+                                int newROwCount = groupDataJtable.getRowCount() - 1;
+                                groupDataJtable.setRowSelectionInterval(newROwCount, newROwCount);
+                            }else {
+                                Group[] currentGroups = controller.getGroupByPattern(groupSearchTextField.getText());
+                                refreshTableGroupsData(currentGroups);
+                                if (currentGroups.length != 0) {
+                                    currentGroup = currentGroups[0];
+                                    refreshTableStudentData(currentGroup.getStudents());
+                                    groupNameJLabel.setText(currentGroup.getNumberOfGroup());
+                                    groupDataJtable.setRowSelectionInterval(0, 0);
+                                } else {
+                                    currentGroup = FREE_GROUP;
+                                    groupNameJLabel.setText(currentGroup.getNumberOfGroup());
+                                    refreshTableStudentData(currentGroup.getStudents());
+                                }
+                            }
                             mainWindow.setEnabled(true);
                             addGroupDialog.dispose();
                         } catch (NotValidValueException ex) {
                             ex.printStackTrace();
-                            //TODO: сделать окно ошибки
+                            showErrorMessage(addGroupDialog, "Entered wrong group number", 150, 150, 200, 300);
                         }
                     }
                 });
@@ -310,7 +389,11 @@ public class MainForm extends JFrame {
                     int selectedRow = groupDataJtable.getSelectedRow();
                     Group deletingGroup = controller.getGroup(groupDataJtable.getValueAt(selectedRow, 0).toString());
                     controller.deleteGroup(deletingGroup);
-                    refreshTableGroupsData(controller.getGroups());
+                    if(groupSearchTextField.getText().equals("")) {
+                        refreshTableGroupsData(controller.getGroups());
+                    }else {
+                        refreshTableGroupsData(controller.getGroupByPattern(groupSearchTextField.getText()));
+                    }
                     if (selectedRow == groupDataJtable.getRowCount() && groupDataJtable.getRowCount() != 0)
                         groupDataJtable.setRowSelectionInterval(selectedRow - 1, selectedRow - 1);
                     else if (selectedRow < groupDataJtable.getRowCount())
@@ -389,7 +472,7 @@ public class MainForm extends JFrame {
                                     currentGroup = controller.getGroup(newGroupName);
                                     groupDataJtable.setValueAt(newGroupName, groupDataJtable.getSelectedRow(), 0);
                                     groupNameJLabel.setText(newGroupName);
-                                    refreshTableStudentData(currentGroup.getStudents());
+                                    //refreshTableStudentData(currentGroup.getStudents());
                                 }
                                 mainWindow.setEnabled(true);
                                 changeGroupDialog.dispose();
@@ -494,7 +577,9 @@ public class MainForm extends JFrame {
                                         (Date)datePicker.getModel().getValue()
                                         );
                                 groupDataJtable.setValueAt(Integer.toString(currentGroup.getSizeOfGroup()), groupDataJtable.getSelectedRow(), 1);
-                                refreshTableStudentData(currentGroup.getStudents());
+                                if(studentSearchTextField.getText().equals(""))
+                                    refreshTableStudentData(currentGroup.getStudents());
+                                else refreshTableStudentData(controller.getStudentByPattern(currentGroup, studentSearchTextField.getText()));
                                 mainWindow.setEnabled(true);
                                 addStudentDialog.dispose();
                             } catch (NotValidValueException ex) {
@@ -538,7 +623,9 @@ public class MainForm extends JFrame {
                 if(currentGroup.getSizeOfGroup() > 0){
                     int oldSelectedRow = studentDataJTable.getSelectedRow();
                     controller.deleteStudent(currentGroup, controller.getStudentById(currentGroup, Integer.parseInt(studentDataJTable.getValueAt(oldSelectedRow, 0).toString())));
-                    refreshTableStudentData(currentGroup.getStudents());
+                    if(studentSearchTextField.getText().equals(""))
+                        refreshTableStudentData(currentGroup.getStudents());
+                    else refreshTableStudentData(controller.getStudentByPattern(currentGroup, studentSearchTextField.getText()));
                     groupDataJtable.setValueAt(Integer.toString(currentGroup.getSizeOfGroup()), groupDataJtable.getSelectedRow(), 1);
                     if(currentGroup.getSizeOfGroup() != 0){
                         if(oldSelectedRow == currentGroup.getSizeOfGroup())
@@ -625,7 +712,9 @@ public class MainForm extends JFrame {
                                         studentPatronymicTextField.getText(),
                                         (Date)datePicker.getModel().getValue()
                                 );
-                                refreshTableStudentData(currentGroup.getStudents());
+                                if(studentSearchTextField.getText().equals(""))
+                                    refreshTableStudentData(currentGroup.getStudents());
+                                else refreshTableStudentData(controller.getStudentByPattern(currentGroup, studentSearchTextField.getText()));
                                 studentDataJTable.setRowSelectionInterval(studentSelectedRow, studentSelectedRow);
                                 mainWindow.setEnabled(true);
                                 changeStudentDialog.dispose();
@@ -749,7 +838,7 @@ public class MainForm extends JFrame {
             studentDataJTable.setRowSelectionInterval(0,0);
     }
 
-    private void showErrorMessage(JFrame owner, String message, int x, int y, int width, int height){
+    private void showErrorMessage(JDialog owner, String message, int x, int y, int width, int height){
         JDialog errorDialog = new JDialog();
         errorDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
         errorDialog.setBounds(x, y, width, height);
