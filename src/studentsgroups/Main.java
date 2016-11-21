@@ -60,7 +60,7 @@ public class Main {
         //region filling
         Faculty fac = new FacultyImpl("FIST");
 
-        Group group = new GroupImpl("TP-666");
+        /*Group group = new GroupImpl("TP-666");
         Student student = new StudentImpl(1, "Ivanova", "Yana", "Alexandrovna", Date.from(Instant.now()));
         group.addStudent(student);
         student = new StudentImpl(2, "Ivanova", "Yana", "Alexandrovna", Date.from(Instant.now()));
@@ -215,7 +215,7 @@ public class Main {
         group.addStudent(student);
         student = new StudentImpl(65, "Ivanova", "Yana", "Alexandrovna", Date.from(Instant.now()));
         group.addStudent(student);
-        fac.addGroup(group);
+        fac.addGroup(group);*/
         //endregion
 
         //Faculty fac = new FacultyImpl(" ");
