@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<facultyImpl facultyName="FIST">
+    <groups>
+        <group numberOfGroup="TP-666">
+            <students>
+                <student id="1" surname="Svetlova" name="Svetlana" patronymic="Vyacheslavovna" enrollmentDate="2016-11-21T00:00:00+04:00"/>
+                <student id="2" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+                <student id="3" surname="Kapustina" name="Irina" patronymic="Olegovna" enrollmentDate="2016-11-21T00:00:00+04:00"/>
+                <student id="4" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+                <student id="5" surname="Elegin" name="Evgeniy" patronymic="Kirillovich" enrollmentDate="2016-11-21T00:00:00+04:00"/>
+                <student id="6" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+                <student id="7" surname="Ivanov" name="Ivan" patronymic="Mihaylovich" enrollmentDate="2016-11-21T00:00:00+04:00"/>
+                <student id="8" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+            </students>
+        </group>
+        <group numberOfGroup="OPC-776">
+            <students>
+                <student id="9" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+                <student id="10" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+                <student id="11" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+                <student id="12" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+                <student id="13" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+                <student id="14" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+                <student id="15" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+                <student id="16" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+            </students>
+        </group>
+        <group numberOfGroup="BF-687">
+            <students>
+                <student id="17" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+                <student id="18" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+                <student id="19" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+                <student id="20" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+                <student id="21" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+                <student id="22" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+                <student id="23" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+                <student id="24" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+            </students>
+        </group>
+        <group numberOfGroup="TF-546">
+            <students>
+                <student id="25" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+                <student id="26" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+                <student id="27" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+                <student id="28" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+                <student id="29" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+                <student id="30" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+                <student id="31" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+                <student id="32" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+            </students>
+        </group>
+        <group numberOfGroup="SD-666">
+            <students>
+                <student id="33" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+            </students>
+        </group>
+        <group numberOfGroup="TP-666">
+            <students>
+                <student id="34" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+                <student id="35" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+                <student id="36" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+                <student id="37" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+                <student id="38" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+                <student id="39" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+                <student id="40" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+                <student id="41" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+            </students>
+        </group>
+        <group numberOfGroup="TBG-666">
+            <students>
+                <student id="42" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+                <student id="43" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+                <student id="44" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+                <student id="45" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+                <student id="46" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+                <student id="47" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+                <student id="48" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+                <student id="49" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+            </students>
+        </group>
+        <group numberOfGroup="KJ-666">
+            <students>
+                <student id="50" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+                <student id="51" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+                <student id="52" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+                <student id="53" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+                <student id="54" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+                <student id="55" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+                <student id="56" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+                <student id="57" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+            </students>
+        </group>
+        <group numberOfGroup="XCV-666">
+            <students>
+                <student id="58" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+                <student id="59" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+                <student id="60" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+                <student id="61" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+                <student id="62" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+                <student id="63" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+                <student id="64" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+                <student id="65" surname="Ivanova" name="Yana" patronymic="Alexandrovna" enrollmentDate="2016-11-21T10:41:11.487+04:00"/>
+            </students>
+        </group>
+    </groups>
+</facultyImpl>

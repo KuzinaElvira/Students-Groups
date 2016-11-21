@@ -114,11 +114,25 @@ public class Controller {
         Collection<Group> groupsByPattern = new LinkedList<>();
         CheckMatching checker = new CheckMatching(pattern);
         for(Group group : faculty){
-            if(checker.isMatches(group.getNumberOfGroup())){
+            if(checker.doMatch(pattern, group.getNumberOfGroup())){
                 groupsByPattern.add(group);
             }
+//            if(checker.isMatches(group.getNumberOfGroup())){
+//                groupsByPattern.add(group);
+//            }
         }
         return groupsByPattern;
+    }
+    
+    /**
+     * Поиск данных в соответствии с шаблоном
+     * @param pattern
+     * @return 
+     */
+    public Group[] getGroupByPattern(String pattern){
+        Collection<Group> groups = getGroupsByPattern(pattern);
+        Group[] groupss = new Group[groups.size()];        
+        return groups.toArray(groupss);
     }
     
     /**
@@ -131,8 +145,8 @@ public class Controller {
         CheckMatching checker = new CheckMatching(pattern);
         for(Group group : faculty){            
             for(Student student : group){
-                if(checker.isMatches(student.getSurname()) || checker.isMatches(student.getName()) || checker.isMatches(student.getPatronymic())){
-                    studentsByPattern.add(student);
+                if(checker.doMatch(pattern, student.getSurname(), student.getName(), student.getPatronymic())){
+                studentsByPattern.add(student);
                 }
             }
         }
@@ -149,24 +163,13 @@ public class Controller {
         Collection<Student> studentsByPattern = new LinkedList<>();
         CheckMatching checker = new CheckMatching(pattern);
         for (Student student : group) {
-            if (checker.isMatches(student.getSurname()) || checker.isMatches(student.getName()) || checker.isMatches(student.getPatronymic())) {
+            if(checker.doMatch(pattern, student.getSurname(), student.getName(), student.getPatronymic())){
                 studentsByPattern.add(student);
-            }
+                }
         }
         Student[] studs = new Student[studentsByPattern.size()];
         return studentsByPattern.toArray(studs);
-    }
-    
-    /**
-     * Поиск данных в соответствии с шаблоном
-     * @param pattern
-     * @return 
-     */
-    public Group[] getGroupByPattern(String pattern){
-        Collection<Group> groups = getGroupsByPattern(pattern);
-        Group[] groupss = new Group[groups.size()];        
-        return groups.toArray(groupss);
-    }
+    }   
     
     /**
      * Добавление студента в группу
@@ -174,14 +177,16 @@ public class Controller {
      * @param student 
      */
     public void addStudent(Group group, Student student) {
-        for (Student stud : group) {
-            if (stud.getIdStudent() == student.getIdStudent()) {
-                throw new ObjectExistsException("Вы не можете добавить уже существующего студента.");
+        for (Group grp : faculty) {
+            for (Student stud : grp) {
+                if (stud.getIdStudent() == student.getIdStudent()) {
+                    throw new ObjectExistsException("Вы не можете добавить уже существующего на факультете студента.");
+                }
             }
         }
         group.addStudent(student);
     }
-    
+
     /**
      * Добавление студента в группу
      * @param group

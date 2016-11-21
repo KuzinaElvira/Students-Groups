@@ -278,7 +278,8 @@ public class MainForm extends JFrame {
                 if(text.equals("")){
                     refreshTableStudentData(currentGroup.getStudents());
                 }else {
-                    refreshTableStudentData(controller.getStudentByPattern(currentGroup, text));
+                    Student[] studs = controller.getStudentByPattern(currentGroup, text);
+                    refreshTableStudentData(studs);
                 }
             }
         });
@@ -872,7 +873,7 @@ public class MainForm extends JFrame {
     }
 
     private void refreshTableStudentData(Student[] students){
-        studentDataJTable.setModel(new DefaultTableModel(getStudentsdata(currentGroup.getStudents()), studentTableHeaders));
+        studentDataJTable.setModel(new DefaultTableModel(getStudentsdata(students), studentTableHeaders));
         if(studentDataJTable.getRowCount() != 0)
             studentDataJTable.setRowSelectionInterval(0,0);
     }

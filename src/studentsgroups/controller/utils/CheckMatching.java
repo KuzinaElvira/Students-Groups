@@ -24,13 +24,26 @@ public class CheckMatching {
         pattern = Pattern.compile(regExp);
     }
     
-    public boolean isMatches(String str) {
-        if(!(str.contains(".") || str.contains("?") || str.contains("*") || str.contains("+") || str.contains("$") 
-            || str.contains("^") || str.contains("(") || str.contains(")") || str.contains("[") || str.contains("]")
-            || str.contains("{") || str.contains("}") || str.contains("\\"))){
-                str = "*" + str + "*";
-        }
+    private boolean isMatches(String str) { 
         Matcher m = pattern.matcher(str);
         return m.matches();
+    }
+    
+    private boolean isContains(String str, String... fields) {
+        for (String field : fields) {
+            if (field.contains(str)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public boolean doMatch(String str, String... fields){
+        if(!str.contains(".") && !str.contains("?") && !str.contains("*") && !str.contains("+") && !str.contains("$") 
+            && !str.contains("^") && !str.contains("(") && !str.contains(")") && !str.contains("[") && !str.contains("]")
+            && !str.contains("{") && !str.contains("}") && !str.contains("\\")){
+            return isContains(str, fields);
+        }
+        return isMatches(str);
     }
 }
