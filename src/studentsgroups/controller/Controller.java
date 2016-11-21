@@ -311,7 +311,7 @@ public class Controller {
             if(group.getNumberOfGroup().equals(oldName)){
                 for(Group groupp : faculty){
                     if(groupp.getNumberOfGroup().equals(newName)){
-                        throw new ObjectExistsException("Вы не можете добавить уже существующую на факультете группу");
+                        throw new ObjectExistsException("Вы не можете добавить уже существующую на факультете группу.");
                     }
                 }
                 group.setNumberOfGroup(newName);
