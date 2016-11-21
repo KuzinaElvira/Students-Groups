@@ -37,7 +37,7 @@ public class MainForm extends JFrame {
 
     //region переменные окна группы 12 left
     private String[] groupTableHeaders = {"название группы", "число cтудентов"};
-    private String[] studentTableHeaders = {"ID", "Name", "Surname", "Patronymic", "Enrollment date"};
+    private String[] studentTableHeaders = {"ID", "Surname", "Name", "Patronymic", "Enrollment date"};
 
     private class ReaderActionListener implements ActionListener{
 
@@ -862,8 +862,8 @@ public class MainForm extends JFrame {
         int counter = 0;
         for(Student student : students){
             result[counter][0] = Integer.toString(student.getIdStudent());
-            result[counter][1] = student.getName();
-            result[counter][2] = student.getSurname();
+            result[counter][1] = student.getSurname();
+            result[counter][2] = student.getName();
             result[counter][3] = student.getPatronymic();
             result[counter][4] = sdf.format(student.getEnrollmentDate());
             counter++;
