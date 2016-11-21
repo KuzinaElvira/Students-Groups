@@ -309,6 +309,11 @@ public class Controller {
         isValidString(newName);
         for(Group group : faculty){
             if(group.getNumberOfGroup().equals(oldName)){
+                for(Group groupp : faculty){
+                    if(groupp.getNumberOfGroup().equals(newName)){
+                        throw new ObjectExistsException("Вы не можете добавить уже существующую на факультете группу");
+                    }
+                }
                 group.setNumberOfGroup(newName);
                 return true;
             }
