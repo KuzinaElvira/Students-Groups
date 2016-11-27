@@ -10,9 +10,5 @@ package studentsgroups.controller.utils;
  * @author Elvira
  */
 public class ObjectNotFoundException extends RuntimeException{
-    
-    public ObjectNotFoundException(String message) {
-        System.out.println(message);
-    }
-    
+
 }

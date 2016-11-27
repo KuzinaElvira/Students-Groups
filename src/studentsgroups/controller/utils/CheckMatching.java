@@ -20,16 +20,18 @@ public class CheckMatching {
         pattern = Pattern.compile(regExp);
     }
 
+    @Deprecated
     public void setPattern(String regExp) {
         pattern = Pattern.compile(regExp);
     }
     
-    private boolean isMatches(String str) { 
+    @Deprecated
+    private boolean isMatches(String str) {
         Matcher m = pattern.matcher(str);
         return m.matches();
     }
     
-    private boolean isContains(String str, String... fields) {
+    public boolean isContains(String str, String... fields) {
         for (String field : fields) {
             if (field.contains(str)) {
                 return true;
@@ -38,12 +40,14 @@ public class CheckMatching {
         return false;
     }
     
+    @Deprecated
     public boolean doMatch(String str, String... fields){
-        if(!str.contains(".") && !str.contains("?") && !str.contains("*") && !str.contains("+") && !str.contains("$") 
-            && !str.contains("^") && !str.contains("(") && !str.contains(")") && !str.contains("[") && !str.contains("]")
-            && !str.contains("{") && !str.contains("}") && !str.contains("\\")){
+        if(!str.contains("\\.") && !str.contains("\\?") && !str.contains("\\*") && !str.contains("\\+") && !str.contains("\\$") 
+            && !str.contains("\\^") && !str.contains("\\(") && !str.contains("\\)") && !str.contains("\\[") && !str.contains("\\]")
+            && !str.contains("\\{") && !str.contains("\\}") && !str.contains("\\\\")){
             return isContains(str, fields);
         }
-        return isMatches(str);
+        else
+            return isMatches(str);
     }
 }

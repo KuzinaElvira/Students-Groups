@@ -43,13 +43,24 @@ public class Controller {
         return faculty;
     }
     
+    private void isValidIDs(Faculty fac) throws JAXBException{
+        Collection<Integer> ids = new LinkedList<>();
+        for(Group group : fac){
+            for(Student student :  group){
+                if(ids.contains(student.getIdStudent()))
+                    throw new JAXBException("Файл содержит студентов с повторяющимися ID.");
+                ids.add(student.getIdStudent());
+            }
+        }
+    }
+    
     /**
      * Проверка строк на наличие значения
      * @param str 
      */
     private void isValidString(String str){
         if(str == null || str.equals("")){
-            throw new NotValidValueException("Введенное значение некорректно.");
+            throw new NotValidValueException();
         }
     }
     
@@ -92,6 +103,11 @@ public class Controller {
         ObjectInputStream ois = new ObjectInputStream(fis);
         Faculty fac =  (Faculty) ois.readObject();
         ois.close();
+        try{
+            isValidIDs(fac);
+        }catch(JAXBException ex){
+            throw new ClassNotFoundException();
+        }
         faculty = fac;
     }
     
@@ -114,12 +130,9 @@ public class Controller {
         Collection<Group> groupsByPattern = new LinkedList<>();
         CheckMatching checker = new CheckMatching(pattern);
         for(Group group : faculty){
-            if(checker.doMatch(pattern, group.getNumberOfGroup())){
+            if(checker.isContains(pattern, group.getNumberOfGroup())){
                 groupsByPattern.add(group);
             }
-//            if(checker.isMatches(group.getNumberOfGroup())){
-//                groupsByPattern.add(group);
-//            }
         }
         return groupsByPattern;
     }
@@ -145,7 +158,7 @@ public class Controller {
         CheckMatching checker = new CheckMatching(pattern);
         for(Group group : faculty){            
             for(Student student : group){
-                if(checker.doMatch(pattern, student.getSurname(), student.getName(), student.getPatronymic())){
+                if(checker.isContains(pattern, student.getSurname(), student.getName(), student.getPatronymic())){
                 studentsByPattern.add(student);
                 }
             }
@@ -163,7 +176,7 @@ public class Controller {
         Collection<Student> studentsByPattern = new LinkedList<>();
         CheckMatching checker = new CheckMatching(pattern);
         for (Student student : group) {
-            if(checker.doMatch(pattern, student.getSurname(), student.getName(), student.getPatronymic())){
+            if(checker.isContains(pattern, student.getSurname(), student.getName(), student.getPatronymic())){
                 studentsByPattern.add(student);
                 }
         }
@@ -180,7 +193,7 @@ public class Controller {
         for (Group grp : faculty) {
             for (Student stud : grp) {
                 if (stud.getIdStudent() == student.getIdStudent()) {
-                    throw new ObjectExistsException("Вы не можете добавить уже существующего на факультете студента.");
+                    throw new ObjectExistsException();
                 }
             }
         }
@@ -222,7 +235,7 @@ public class Controller {
                 return stud;
             }
         }
-        throw new ObjectNotFoundException("Студент не найден.");
+        throw new ObjectNotFoundException();
     }
     
     /**
@@ -239,6 +252,11 @@ public class Controller {
      * @param group 
      */
     public void addGroup(Group group){
+        for(Group groupp : faculty){
+            if(group.getNumberOfGroup().equals(groupp.getNumberOfGroup())){
+                        throw new ObjectExistsException();
+                    }
+        }
         faculty.addGroup(group);
     }
     
@@ -295,7 +313,7 @@ public class Controller {
                 return true;
             }
         }
-        throw new ObjectNotFoundException("Студент не найден.");
+        throw new ObjectNotFoundException();
     }
     
     /**
@@ -311,14 +329,14 @@ public class Controller {
             if(group.getNumberOfGroup().equals(oldName)){
                 for(Group groupp : faculty){
                     if(groupp.getNumberOfGroup().equals(newName)){
-                        throw new ObjectExistsException("Вы не можете добавить уже существующую на факультете группу.");
+                        throw new ObjectExistsException();
                     }
                 }
                 group.setNumberOfGroup(newName);
                 return true;
             }
         }
-        throw new ObjectNotFoundException("Группа не найдена.");
+        throw new ObjectNotFoundException();
     }
     
     /**
@@ -345,7 +363,8 @@ public class Controller {
         JAXBContext context = JAXBContext.newInstance(FacultyImpl.class);
         Unmarshaller unmarshaller = context.createUnmarshaller();
         FileInputStream fis = new FileInputStream(file);
-        faculty = (Faculty) unmarshaller.unmarshal(fis);
+        Faculty facultyFromXML = (Faculty) unmarshaller.unmarshal(fis);
+        isValidIDs(facultyFromXML);
+        faculty = facultyFromXML;
     }
-    
 }

@@ -40,6 +40,10 @@ public class StudentImpl implements Student{
     public int getIdStudent() {
         return idStudent;
     }
+
+    private void setIdStudent(int idStudent) {
+        this.idStudent = idStudent;
+    } 
     
     @Override
     @XmlAttribute

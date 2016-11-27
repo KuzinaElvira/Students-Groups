@@ -10,9 +10,5 @@ package studentsgroups.controller.utils;
  * @author Elvira
  */
 public class ObjectExistsException extends RuntimeException{
-    
-    public ObjectExistsException(String message) {
-        System.out.println(message);
-    }
-    
+
 }
