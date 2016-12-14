@@ -9,7 +9,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import org.xml.sax.SAXException;
-import studentsgroups.controller.Controller;
+import studentsgroups.controller.ControllerImpl;
 import studentsgroups.model.Faculty;
 import studentsgroups.model.Group;
 import studentsgroups.model.Student;
@@ -233,7 +233,7 @@ public class Main {
 
         Faculty fac = new FacultyImpl(" ");
 
-        Controller controller = new Controller(fac);
+        ControllerImpl controller = new ControllerImpl(fac);
         new MainForm(controller);
 
     }

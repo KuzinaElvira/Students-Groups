@@ -6,6 +6,7 @@
 package studentsgroups.model;
 
 import java.io.Serializable;
+import java.util.Comparator;
 
 /**
  *
@@ -18,6 +19,5 @@ public interface Group extends Iterable<Student>, Serializable{
     public void setNumberOfGroup(String numberOfGroup);
     public void addStudent(Student newStudent);
     public void deleteStudent(Student exstudent);
-    public Student[] getStudents();
-    
+    public Student[] getStudents();    
 }

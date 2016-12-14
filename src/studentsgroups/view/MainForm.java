@@ -5,7 +5,7 @@ import net.sourceforge.jdatepicker.*;
 import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
 import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
 import net.sourceforge.jdatepicker.impl.UtilDateModel;
-import studentsgroups.controller.Controller;
+import studentsgroups.controller.ControllerImpl;
 import studentsgroups.controller.utils.NotValidValueException;
 import studentsgroups.controller.utils.ObjectExistsException;
 import studentsgroups.model.Group;
@@ -31,7 +31,7 @@ public class MainForm extends JFrame {
 
     private static final Group FREE_GROUP = new GroupImpl(" ");
 
-    private Controller controller;
+    private ControllerImpl controller;
     private Group currentGroup;
     private JFrame mainWindow;
 
@@ -129,7 +129,7 @@ public class MainForm extends JFrame {
 
     //endregion
 
-    public MainForm(Controller controller) {
+    public MainForm(ControllerImpl controller) {
         super("Group students");
         this.controller = controller;
         this.setBounds(100, 100, 750, 500);
