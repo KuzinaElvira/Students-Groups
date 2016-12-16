@@ -21,11 +21,10 @@ import studentsgroups.controller.Controller;
 public class RMIUtils {
     public static final String CONTROLLER = "Controller";
     
-    public static Registry createServer(int port, Controller controller) throws RemoteException, AlreadyBoundException{
+    public static void createServer(int port, Controller controller) throws RemoteException, AlreadyBoundException{
         Registry registry = LocateRegistry.createRegistry(port);
         Remote stub = UnicastRemoteObject.exportObject(controller, 0);
         registry.bind(CONTROLLER, stub);
-        return registry;
     }
     
     public static Controller connectToServer(int port, String host) throws RemoteException, NotBoundException{

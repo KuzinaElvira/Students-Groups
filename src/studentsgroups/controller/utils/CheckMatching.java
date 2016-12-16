@@ -7,7 +7,6 @@ package studentsgroups.controller.utils;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 /**
  *
  * @author Elvira
@@ -17,7 +16,7 @@ public class CheckMatching {
     private Pattern pattern;
     
     public CheckMatching(String regExp){
-        pattern = Pattern.compile(regExp);
+        pattern = Pattern.compile(regExp, Pattern.CASE_INSENSITIVE);
     }
 
     @Deprecated
@@ -25,12 +24,13 @@ public class CheckMatching {
         pattern = Pattern.compile(regExp);
     }
     
-    @Deprecated
+//    @Deprecated
     private boolean isMatches(String str) {
         Matcher m = pattern.matcher(str);
-        return m.matches();
+        return m.find();
     }
     
+//    @Deprecated
     public boolean isContains(String str, String... fields) {
         for (String field : fields) {
             if (field.contains(str)) {
@@ -40,14 +40,14 @@ public class CheckMatching {
         return false;
     }
     
-    @Deprecated
+//    @Deprecated
     public boolean doMatch(String str, String... fields){
-        if(!str.contains("\\.") && !str.contains("\\?") && !str.contains("\\*") && !str.contains("\\+") && !str.contains("\\$") 
-            && !str.contains("\\^") && !str.contains("\\(") && !str.contains("\\)") && !str.contains("\\[") && !str.contains("\\]")
-            && !str.contains("\\{") && !str.contains("\\}") && !str.contains("\\\\")){
-            return isContains(str, fields);
-        }
-        else
+//        if(!str.contains("\\.") && !str.contains("\\?") && !str.contains("\\*") && !str.contains("\\+") && !str.contains("\\$") 
+//            && !str.contains("\\^") && !str.contains("\\(") && !str.contains("\\)") && !str.contains("\\[") && !str.contains("\\]")
+//            && !str.contains("\\{") && !str.contains("\\}") && !str.contains("\\\\")){
+//            return isContains(str, fields);
+//        }
+//        else
             return isMatches(str);
     }
 }

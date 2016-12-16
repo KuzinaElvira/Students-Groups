@@ -45,7 +45,7 @@ public interface Controller extends Remote{
     public boolean setGroupName(String oldName, String newName) throws NotValidValueException, RemoteException;
     public void writeToXML(File file) throws JAXBException, FileNotFoundException, RemoteException;
     public void readXML(File file) throws FileNotFoundException, JAXBException, RemoteException;
-    public Student[] sortStudentsBySurname(Student[] studs);
-    public Student[] sortStudentsById(Student[] studs);
-    public Group[] sortGroupsByName(Group[] groups);
+    public Student[] sortStudentsBySurname(Student[] studs) throws RemoteException;
+    public Student[] sortStudentsById(Student[] studs) throws RemoteException;
+    public Group[] sortGroupsByName(Group[] groups) throws RemoteException;
 }

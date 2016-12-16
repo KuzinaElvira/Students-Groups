@@ -43,11 +43,11 @@ public class ControllerImpl implements Controller{
         this.faculty = faculty;
     }  
     
-    public Faculty getFaculty(){
+    public synchronized Faculty getFaculty(){
         return faculty;
     }
     
-    private void isValidIDs(Faculty fac) throws JAXBException{
+    private synchronized void isValidIDs(Faculty fac) throws JAXBException{
         Collection<Integer> ids = new LinkedList<>();
         for(Group group : fac){
             for(Student student :  group){
@@ -62,7 +62,7 @@ public class ControllerImpl implements Controller{
      * Проверка строк на наличие значения
      * @param str 
      */
-    private void isValidString(String str){
+    private synchronized void isValidString(String str){
         if(str == null || str.equals("")){
             throw new NotValidValueException();
         }
@@ -73,7 +73,7 @@ public class ControllerImpl implements Controller{
      * @return 
      */
     @Override
-    public String getFacultyName(){
+    public synchronized String getFacultyName(){
         return faculty.getFacultyName();
     }
     
@@ -83,7 +83,7 @@ public class ControllerImpl implements Controller{
      * @throws IOException 
      */
     @Override
-    public void writeToFile(File file) throws IOException{
+    public synchronized void writeToFile(File file) throws IOException{
         FileOutputStream fos = new FileOutputStream(file);
         ObjectOutputStream oos = new ObjectOutputStream(fos);
         oos.writeObject(faculty);
@@ -96,7 +96,7 @@ public class ControllerImpl implements Controller{
      * @throws IOException 
      */
     @Override
-    public void writeToFile(String fileName) throws IOException{
+    public synchronized void writeToFile(String fileName) throws IOException{
         writeToFile(new File(fileName));
     }
     /**
@@ -106,7 +106,7 @@ public class ControllerImpl implements Controller{
      * @throws ClassNotFoundException 
      */
     @Override
-    public void readFile(File file) throws IOException, ClassNotFoundException{
+    public synchronized void readFile(File file) throws IOException, ClassNotFoundException{
         FileInputStream fis = new FileInputStream(file);
         ObjectInputStream ois = new ObjectInputStream(fis);
         Faculty fac =  (Faculty) ois.readObject();
@@ -126,7 +126,7 @@ public class ControllerImpl implements Controller{
      * @throws ClassNotFoundException 
      */
     @Override
-    public void readFile(String fileName) throws IOException, ClassNotFoundException{
+    public synchronized void readFile(String fileName) throws IOException, ClassNotFoundException{
         readFile(new File(fileName));
     }
     
@@ -136,11 +136,11 @@ public class ControllerImpl implements Controller{
      * @return 
      */
     @Override
-    public Collection<Group> getGroupsByPattern(String pattern){
+    public synchronized Collection<Group> getGroupsByPattern(String pattern){
         Collection<Group> groupsByPattern = new LinkedList<>();
         CheckMatching checker = new CheckMatching(pattern);
         for(Group group : faculty){
-            if(checker.isContains(pattern, group.getNumberOfGroup())){
+            if(checker.doMatch(pattern, group.getNumberOfGroup())){
                 groupsByPattern.add(group);
             }
         }
@@ -148,29 +148,29 @@ public class ControllerImpl implements Controller{
     }
     
     /**
-     * Поиск данных в соответствии с шаблоном
+     * Поиск групп в соответствии с шаблоном
      * @param pattern
      * @return 
      */
     @Override
-    public Group[] getGroupByPattern(String pattern){
+    public synchronized Group[] getGroupByPattern(String pattern){
         Collection<Group> groups = getGroupsByPattern(pattern);
         Group[] groupss = new Group[groups.size()];        
         return groups.toArray(groupss);
     }
     
     /**
-     * Поиск данных в соответствии с шаблоном
+     * Поиск студентов в соответствии с шаблоном
      * @param pattern
      * @return 
      */
     @Override
-    public Collection<Student> getStudentsByPattern(String pattern){
+    public synchronized Collection<Student> getStudentsByPattern(String pattern){
         Collection<Student> studentsByPattern = new LinkedList<>();
         CheckMatching checker = new CheckMatching(pattern);
         for(Group group : faculty){            
             for(Student student : group){
-                if(checker.isContains(pattern, student.getSurname(), student.getName(), student.getPatronymic())){
+                if(checker.doMatch(pattern, Integer.toString(student.getIdStudent()), student.getSurname(), student.getName(), student.getPatronymic())){
                 studentsByPattern.add(student);
                 }
             }
@@ -179,17 +179,17 @@ public class ControllerImpl implements Controller{
     }
     
      /**
-     * Поиск данных в соответствии с шаблоном
+     * Поиск студентов в соответствии с шаблоном
      * @param group
      * @param pattern
      * @return 
      */
     @Override
-    public Student[] getStudentByPattern(Group group, String pattern) {
+    public synchronized Student[] getStudentByPattern(Group group, String pattern) {
         Collection<Student> studentsByPattern = new LinkedList<>();
         CheckMatching checker = new CheckMatching(pattern);
         for (Student student : group) {
-            if(checker.isContains(pattern, student.getSurname(), student.getName(), student.getPatronymic())){
+            if(checker.doMatch(pattern, student.getSurname(), student.getName(), student.getPatronymic())){
                 studentsByPattern.add(student);
                 }
         }
@@ -203,7 +203,7 @@ public class ControllerImpl implements Controller{
      * @param student 
      */
     @Override
-    public void addStudent(Group group, Student student) {
+    public synchronized void addStudent(Group group, Student student) {
         for (Group grp : faculty) {
             for (Student stud : grp) {
                 if (stud.getIdStudent() == student.getIdStudent()) {
@@ -224,7 +224,7 @@ public class ControllerImpl implements Controller{
      * @param enrollmentDate 
      */
     @Override
-    public void addStudent(Group group, int id, String name, String surname, String patronymic, Date enrollmentDate){
+    public synchronized void addStudent(Group group, int id, String name, String surname, String patronymic, Date enrollmentDate){
         Student newStudent = new StudentImpl(id, surname, name, patronymic, enrollmentDate);
         addStudent(group, newStudent);
     }
@@ -235,7 +235,7 @@ public class ControllerImpl implements Controller{
      * @param exstudent 
      */
     @Override
-    public void deleteStudent(Group group, Student exstudent){
+    public synchronized void deleteStudent(Group group, Student exstudent){
         group.deleteStudent(exstudent);
     }
     
@@ -246,7 +246,7 @@ public class ControllerImpl implements Controller{
      * @return 
      */
     @Override
-    public Student getStudentById(Group group, int id){
+    public synchronized Student getStudentById(Group group, int id){
         for (Student stud : group) {
             if (stud.getIdStudent() == id) {
                 return stud;
@@ -261,7 +261,7 @@ public class ControllerImpl implements Controller{
      * @return 
      */
     @Override
-    public Student[] getStudents(Group group){
+    public synchronized Student[] getStudents(Group group){
         return group.getStudents();
     }
     
@@ -270,7 +270,7 @@ public class ControllerImpl implements Controller{
      * @param group 
      */
     @Override
-    public void addGroup(Group group){
+    public synchronized void addGroup(Group group){
         for(Group groupp : faculty){
             if(group.getNumberOfGroup().equals(groupp.getNumberOfGroup())){
                         throw new ObjectExistsException();
@@ -284,7 +284,7 @@ public class ControllerImpl implements Controller{
      * @param exgroup 
      */
     @Override
-    public void deleteGroup(Group exgroup){
+    public synchronized void deleteGroup(Group exgroup){
         faculty.deleteGroup(exgroup);
     }
     
@@ -294,7 +294,7 @@ public class ControllerImpl implements Controller{
      * @return 
      */
     @Override
-    public Group getGroup(String numberOfgroup){
+    public synchronized Group getGroup(String numberOfgroup){
         for(Group group : faculty){
             if(group.getNumberOfGroup().equals(numberOfgroup)){
                 return group;
@@ -308,7 +308,7 @@ public class ControllerImpl implements Controller{
      * @return 
      */
     @Override
-    public Group[] getGroups(){
+    public synchronized Group[] getGroups(){
         return faculty.getGroups();
     }
     
@@ -323,7 +323,7 @@ public class ControllerImpl implements Controller{
      * @return  
      */
     @Override
-    public boolean setStudent(Group group, int idStudent, String surname, String name, String patronymic, Date enrollmentDate) {
+    public synchronized boolean setStudent(Group group, int idStudent, String surname, String name, String patronymic, Date enrollmentDate) {
         isValidString(surname);
         isValidString(name);
         isValidString(patronymic);
@@ -347,7 +347,7 @@ public class ControllerImpl implements Controller{
      * @throws NotValidValueException 
      */
     @Override
-    public boolean setGroupName(String oldName, String newName) throws NotValidValueException{
+    public synchronized boolean setGroupName(String oldName, String newName) throws NotValidValueException{
         isValidString(newName);
         for(Group group : faculty){
             if(group.getNumberOfGroup().equals(oldName)){
@@ -370,7 +370,7 @@ public class ControllerImpl implements Controller{
      * @throws FileNotFoundException 
      */
     @Override
-    public void writeToXML(File file) throws JAXBException, FileNotFoundException{
+    public synchronized void writeToXML(File file) throws JAXBException, FileNotFoundException{
         JAXBContext context = JAXBContext.newInstance(FacultyImpl.class);
         Marshaller marshaller = context.createMarshaller();
         FileOutputStream fos = new FileOutputStream(file);
@@ -385,7 +385,7 @@ public class ControllerImpl implements Controller{
      * @throws JAXBException 
      */
     @Override
-    public void readXML(File file) throws FileNotFoundException, JAXBException{
+    public synchronized void readXML(File file) throws FileNotFoundException, JAXBException{
         JAXBContext context = JAXBContext.newInstance(FacultyImpl.class);
         Unmarshaller unmarshaller = context.createUnmarshaller();
         FileInputStream fis = new FileInputStream(file);
@@ -400,7 +400,7 @@ public class ControllerImpl implements Controller{
      * @return 
      */
     @Override
-    public Student[] sortStudentsBySurname(Student[] studs){
+    public synchronized Student[] sortStudentsBySurname(Student[] studs){
         StudentSurnameComparator surnameComp = new StudentSurnameComparator();
         Arrays.sort(studs, surnameComp);
         return studs;
@@ -412,7 +412,7 @@ public class ControllerImpl implements Controller{
      * @return 
      */
     @Override
-    public Student[] sortStudentsById(Student[] studs){
+    public synchronized Student[] sortStudentsById(Student[] studs){
         StudentIDComparator idComp = new StudentIDComparator();
         Arrays.sort(studs, idComp);
         return studs;
@@ -424,7 +424,7 @@ public class ControllerImpl implements Controller{
      * @return 
      */
     @Override
-    public Group[] sortGroupsByName(Group[] groups){
+    public synchronized Group[] sortGroupsByName(Group[] groups){
         GroupNameComparator groupComp = new GroupNameComparator();
         Arrays.sort(groups, groupComp);
         return groups;
