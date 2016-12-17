@@ -151,9 +151,9 @@ public class MainForm extends JFrame {
         String[] address = showConnectDialog();
         if(address != null) {
             int port;
-            if (address.length < 2)
+            if (address.length == 2)//255.255.255.255:1111 если эту строку разделить по ':', то будет ровно 2 строки, а не меньше 2!
                 try {
-                    port = Integer.parseInt(address[2]);
+                    port = Integer.parseInt(address[1]);//Считать с нуля надо!
                 } catch (Exception ex) {
                     port = DEFAULT_PORT;
                 }
