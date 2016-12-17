@@ -8,10 +8,14 @@ import net.sourceforge.jdatepicker.impl.UtilDateModel;
 import studentsgroups.controller.ControllerImpl;
 import studentsgroups.controller.utils.NotValidValueException;
 import studentsgroups.controller.utils.ObjectExistsException;
+import studentsgroups.controller.utils.RMIUtils;
 import studentsgroups.model.Group;
 import studentsgroups.model.Student;
+import studentsgroups.model.comparators.StudentIDComparator;
+import studentsgroups.model.comparators.StudentSurnameComparator;
 import studentsgroups.model.impl.GroupImpl;
 
+import javax.naming.ldap.Control;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.xml.bind.JAXBException;
@@ -19,11 +23,17 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.rmi.ConnectException;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.UnknownHostException;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.StringJoiner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import studentsgroups.controller.Controller;
@@ -33,13 +43,14 @@ import studentsgroups.controller.Controller;
  */
 public class MainForm extends JFrame {
 
+    private static final int DEFAULT_PORT = 5555;
     private static final Group FREE_GROUP = new GroupImpl(" ");
 
     private Controller controller;
     private Group currentGroup;
     private JFrame mainWindow;
 
-    //region переменные окна группы 12 left
+    //region переменные окна группы
     private String[] groupTableHeaders = {"название группы", "число cтудентов"};
     private String[] studentTableHeaders = {"ID", "Surname", "Name", "Patronymic", "Enrollment date"};
 
@@ -111,6 +122,8 @@ public class MainForm extends JFrame {
     private JMenuItem deserializeMenuItem = new JMenuItem("Deserialize");
     private JMenuItem readFromXMLMenuItem = new JMenuItem("ReadFromXML");
     private JMenuItem writeToXMLMenuItem = new JMenuItem("WriteToXML");
+    private JMenuItem connectMenuItem = new JMenuItem("Connect to server");
+    private JMenuItem refreshMenuItem = new JMenuItem("Refresh data");
     private JMenuItem exitMenuItem = new JMenuItem("Exit");
 
     private JTextField groupSearchTextField = new JTextField(14);
@@ -135,13 +148,31 @@ public class MainForm extends JFrame {
 
     public MainForm(Controller controller) throws RemoteException {
         super("Group students");
-        this.controller = controller;
+        String[] address = showConnectDialog();
+        if(address != null) {
+            int port;
+            if (address.length < 2)
+                try {
+                    port = Integer.parseInt(address[2]);
+                } catch (Exception ex) {
+                    port = DEFAULT_PORT;
+                }
+            else {
+                port = DEFAULT_PORT;
+            }
+            try {
+                this.controller = RMIUtils.connectToServer(port, address[0]);
+            } catch (UnknownHostException | ConnectException | NotBoundException ex) {
+                JOptionPane.showMessageDialog(null, "Can't connect to server");
+                this.controller = controller;
+            }
+        }else {this.controller = controller;}
         this.setBounds(100, 100, 750, 500);
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         this.addWindowListener(new WindowListener() {
             @Override
             public void windowOpened(WindowEvent e) {
-                try {
+                /*try {
                     controller.readFile("state.bin");
                     Group[] groups = controller.getGroups();
                     if(groups.length > 0){
@@ -156,12 +187,11 @@ public class MainForm extends JFrame {
                     refreshTableStudentData(currentGroup.getStudents());
                 } catch (IOException | ClassNotFoundException ex) {
                     ex.printStackTrace();
-                }
+                }*/
             }
 
             @Override
             public void windowClosing(WindowEvent e) {
-                //реализовать дял закрытия окна
                 try {
                     controller.writeToFile("state.bin");
                 } catch (IOException ex) {
@@ -301,6 +331,57 @@ public class MainForm extends JFrame {
         });
         fileMenu.add(serializationMenu);
         fileMenu.add(XMLMenu);
+        fileMenu.addSeparator();
+        fileMenu.add(connectMenuItem);
+        connectMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String[] address = showConnectDialog();
+                if(address != null) {
+                    int port;
+                    if (address.length < 2)
+                        try {
+                            port = Integer.parseInt(address[2]);
+                        } catch (Exception ex) {
+                            port = DEFAULT_PORT;
+                        }
+                    else {
+                        port = DEFAULT_PORT;
+                    }
+                Controller oldController = getController();
+                    try{
+                        setController(RMIUtils.connectToServer(port, address[0]));
+                        Group[] newGroups = controller.getGroups();
+                        refreshTableGroupsData(newGroups);
+                        if(newGroups.length < 1)
+                            currentGroup = FREE_GROUP;
+                        else {
+                            groupDataJtable.setRowSelectionInterval(1,1);//TODO если что то поменять на 0 0
+                            currentGroup = newGroups[0];
+                        }
+                        refreshTableStudentData(currentGroup.getStudents());
+                    }catch (RemoteException | NotBoundException ex){
+                        JOptionPane.showMessageDialog(null, "Can't connect to server!");
+                    }
+            }
+        }});
+        fileMenu.add(refreshMenuItem);
+        refreshMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    Group[] newGroups = controller.getGroups();
+                    refreshTableGroupsData(newGroups);
+                    if (newGroups.length < 1)
+                        currentGroup = FREE_GROUP;
+                    else {
+                        groupDataJtable.setRowSelectionInterval(1, 1);//TODO если что то поменять на 0 0
+                        currentGroup = newGroups[0];
+                    }
+                    refreshTableStudentData(currentGroup.getStudents());
+                }catch (RemoteException ex){ex.printStackTrace();}
+            }
+        });
         fileMenu.addSeparator();
         fileMenu.add(exitMenuItem);
         exitMenuItem.addActionListener(new ActionListener() {
@@ -869,11 +950,35 @@ public class MainForm extends JFrame {
             }
         });
         groupDataJtable.getTableHeader().setReorderingAllowed(false);
+        groupDataJtable.getTableHeader().addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                //TODO comparator group
+            }
+        });
 
         studentScrollPane.setComponentPopupMenu(studentTablePopupMenu);
         studentDataJTable.setComponentPopupMenu(studentTablePopupMenu);
         studentDataJTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         studentDataJTable.getTableHeader().setReorderingAllowed(false);
+        studentDataJTable.getTableHeader().addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int col = studentDataJTable.columnAtPoint(e.getPoint());
+                String name = studentDataJTable.getColumnName(col);
+                //"ID", "Surname", "Name", "Patronymic", "Enrollment date"
+                switch (name){
+                    case "ID" : Student[] sortedID = currentGroup.getStudents();
+                        Arrays.sort(sortedID, new StudentIDComparator());
+                        refreshTableStudentData(sortedID);
+                        break;
+                    case "Surname" : Student[] sortedSur = currentGroup.getStudents();
+                        Arrays.sort(sortedSur, new StudentSurnameComparator());
+                        refreshTableStudentData(sortedSur);
+                        break;
+                }
+            }
+        });
 
         container.add(groupsScrollPane);
         container.add(studentsPanel);
@@ -979,5 +1084,27 @@ public class MainForm extends JFrame {
         errorDialog.pack();
         errorDialog.setVisible(true);
     }
+
+    private String[] showConnectDialog(){
+        if(mainWindow != null)
+            mainWindow.setEnabled(false);
+        String result =  JOptionPane.showInputDialog("Input ip address: ", "255.255.255.255:1111");
+        if(result == null) {
+            if (mainWindow != null)
+                mainWindow.setEnabled(true);
+            return null;
+        }
+        else {
+            if(mainWindow != null)
+                mainWindow.setEnabled(true);
+            return result.split(":");
+        }
+    }
+
+    private void setController(Controller newContr){
+        this.controller = newContr;
+    }
+
+    private Controller getController(){return controller;}
 
 }
