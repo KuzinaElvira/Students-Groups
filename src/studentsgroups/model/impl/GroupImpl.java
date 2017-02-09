@@ -10,6 +10,7 @@ import studentsgroups.model.Student;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -75,5 +76,41 @@ public class GroupImpl implements Group{
     @Override
     public Iterator<Student> iterator() {
         return students.iterator();
+    }    
+
+    @Override
+    public String toString() {
+        return "GroupImpl{" + "numberOfGroup=" + numberOfGroup + ", students=" + students.toString() + '}';
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 23 * hash + Objects.hashCode(this.numberOfGroup);
+        hash = 23 * hash + Objects.hashCode(this.students);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final GroupImpl other = (GroupImpl) obj;
+        if (!Objects.equals(this.numberOfGroup, other.numberOfGroup)) {
+            return false;
+        }
+        if (!Objects.equals(this.students, other.students)) {
+            return false;
+        }
+        return true;
+    }
+    
+    
 }

@@ -13,7 +13,7 @@ import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Date;
 import javax.xml.bind.JAXBException;
-import studentsgroups.controller.utils.NotValidValueException;
+import studentsgroups.controller.utils.exceptions.NotValidValueException;
 import studentsgroups.model.Group;
 import studentsgroups.model.Student;
 
@@ -34,14 +34,18 @@ public interface Controller extends Remote{
     public Student[] getStudentByPattern(Group group, String pattern) throws RemoteException;
     public void addStudent(Group group, Student student) throws RemoteException;
     public void addStudent(Group group, int id, String name, String surname, String patronymic, Date enrollmentDate) throws RemoteException;
+    public void addStudent(String groupName, int id, String name, String surname, String patronymic, Date enrollmentDate) throws RemoteException;
     public void deleteStudent(Group group, Student exstudent) throws RemoteException;
+    public void deleteStudent(String groupName, Student exstudent) throws RemoteException;
     public Student getStudentById(Group group, int id) throws RemoteException;
     public Student[] getStudents(Group group) throws RemoteException;
     public void addGroup(Group group) throws RemoteException;
     public void deleteGroup(Group exgroup) throws RemoteException;
+    public void deleteGroup(String exgroupName) throws RemoteException;
     public Group getGroup(String numberOfgroup) throws RemoteException;
     public Group[] getGroups() throws RemoteException;
     public boolean setStudent(Group group, int idStudent, String surname, String name, String patronymic, Date enrollmentDate) throws RemoteException;
+    public boolean setStudent(String groupName, int idStudent, String surname, String name, String patronymic, Date enrollmentDate) throws RemoteException;
     public boolean setGroupName(String oldName, String newName) throws NotValidValueException, RemoteException;
     public void writeToXML(File file) throws JAXBException, FileNotFoundException, RemoteException;
     public void readXML(File file) throws FileNotFoundException, JAXBException, RemoteException;

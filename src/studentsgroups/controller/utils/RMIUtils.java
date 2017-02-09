@@ -25,6 +25,7 @@ public class RMIUtils {
         Registry registry = LocateRegistry.createRegistry(port);
         Remote stub = UnicastRemoteObject.exportObject(controller, 0);
         registry.bind(CONTROLLER, stub);
+        System.out.println("Server created!");
     }
     
     public static Controller connectToServer(int port, String host) throws RemoteException, NotBoundException{

@@ -7,6 +7,7 @@ package studentsgroups.model.impl;
 
 import studentsgroups.model.Student;
 import java.util.Date;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 
@@ -88,4 +89,53 @@ public class StudentImpl implements Student{
     public void setEnrollmentDate(Date enrollmentDate) {
         this.enrollmentDate = enrollmentDate;
     }
+
+    @Override
+    public String toString() {
+        return "StudentImpl{" + "idStudent=" + idStudent + ", surname=" + surname + ", name=" + name + ", patronymic=" + patronymic + ", enrollmentDate=" + enrollmentDate + '}';
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 41 * hash + this.idStudent;
+        hash = 41 * hash + Objects.hashCode(this.surname);
+        hash = 41 * hash + Objects.hashCode(this.name);
+        hash = 41 * hash + Objects.hashCode(this.patronymic);
+        hash = 41 * hash + Objects.hashCode(this.enrollmentDate);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final StudentImpl other = (StudentImpl) obj;
+        if (this.idStudent != other.idStudent) {
+            return false;
+        }
+        if (!Objects.equals(this.surname, other.surname)) {
+            return false;
+        }
+        if (!Objects.equals(this.name, other.name)) {
+            return false;
+        }
+        if (!Objects.equals(this.patronymic, other.patronymic)) {
+            return false;
+        }
+        if (!Objects.equals(this.enrollmentDate, other.enrollmentDate)) {
+            return false;
+        }
+        return true;
+    }
+    
+    
+    
 }

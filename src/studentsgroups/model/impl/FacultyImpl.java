@@ -78,4 +78,10 @@ public class FacultyImpl implements Faculty{
     public Iterator<Group> iterator() {
         return groups.iterator();
     }
+
+    @Override
+    public String toString() {
+        return "FacultyImpl{" + "facultyName=" + facultyName + ", groups=" + groups.toString() + '}';
+    }
+    
 }

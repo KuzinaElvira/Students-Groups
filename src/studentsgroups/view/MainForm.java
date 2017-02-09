@@ -1,13 +1,10 @@
 package studentsgroups.view;
 
-import javafx.geometry.Bounds;
-import net.sourceforge.jdatepicker.*;
 import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
 import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
 import net.sourceforge.jdatepicker.impl.UtilDateModel;
-import studentsgroups.controller.ControllerImpl;
-import studentsgroups.controller.utils.NotValidValueException;
-import studentsgroups.controller.utils.ObjectExistsException;
+import studentsgroups.controller.utils.exceptions.NotValidValueException;
+import studentsgroups.controller.utils.exceptions.ObjectExistsException;
 import studentsgroups.controller.utils.RMIUtils;
 import studentsgroups.model.Group;
 import studentsgroups.model.Student;
@@ -15,7 +12,6 @@ import studentsgroups.model.comparators.StudentIDComparator;
 import studentsgroups.model.comparators.StudentSurnameComparator;
 import studentsgroups.model.impl.GroupImpl;
 
-import javax.naming.ldap.Control;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.xml.bind.JAXBException;
@@ -23,7 +19,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.rmi.ConnectException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -33,7 +28,6 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.StringJoiner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import studentsgroups.controller.Controller;
@@ -46,7 +40,7 @@ public class MainForm extends JFrame {
     private static final int DEFAULT_PORT = 5555;
     private static final Group FREE_GROUP = new GroupImpl(" ");
 
-    private Controller controller;
+    private Controller mainController;
     private Group currentGroup;
     private JFrame mainWindow;
 
@@ -69,7 +63,7 @@ public class MainForm extends JFrame {
                 int result = fileChooser.showOpenDialog(null);
                 if (result == JFileChooser.APPROVE_OPTION) {
                     reader.read(fileChooser.getSelectedFile());
-                    Group[] groups = controller.getGroups();
+                    Group[] groups = mainController.getGroups();
                     if(groups.length > 0){
                         refreshTableGroupsData(groups);
                         groupDataJtable.setRowSelectionInterval(0,0);
@@ -151,9 +145,9 @@ public class MainForm extends JFrame {
         String[] address = showConnectDialog();
         if(address != null) {
             int port;
-            if (address.length == 2)//255.255.255.255:1111 если эту строку разделить по ':', то будет ровно 2 строки, а не меньше 2!
+            if (address.length == 2)
                 try {
-                    port = Integer.parseInt(address[1]);//Считать с нуля надо!
+                    port = Integer.parseInt(address[1]);
                 } catch (Exception ex) {
                     port = DEFAULT_PORT;
                 }
@@ -161,20 +155,23 @@ public class MainForm extends JFrame {
                 port = DEFAULT_PORT;
             }
             try {
-                this.controller = RMIUtils.connectToServer(port, address[0]);
+                this.mainController = RMIUtils.connectToServer(port, address[0]);
             } catch (UnknownHostException | ConnectException | NotBoundException ex) {
                 JOptionPane.showMessageDialog(null, "Can't connect to server");
-                this.controller = controller;
+                this.mainController = controller;
             }
-        }else {this.controller = controller;}
+        }
+        else {
+            this.mainController = controller;
+        }
         this.setBounds(100, 100, 750, 500);
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         this.addWindowListener(new WindowListener() {
             @Override
             public void windowOpened(WindowEvent e) {
                 /*try {
-                    controller.readFile("state.bin");
-                    Group[] groups = controller.getGroups();
+                    mainController.readFile("state.bin");
+                    Group[] groups = mainController.getGroups();
                     if(groups.length > 0){
                         refreshTableGroupsData(groups);
                         groupDataJtable.setRowSelectionInterval(0,0);
@@ -187,13 +184,14 @@ public class MainForm extends JFrame {
                     refreshTableStudentData(currentGroup.getStudents());
                 } catch (IOException | ClassNotFoundException ex) {
                     ex.printStackTrace();
-                }*/
+                }
+*/
             }
 
             @Override
             public void windowClosing(WindowEvent e) {
                 try {
-                    controller.writeToFile("state.bin");
+                    mainController.writeToFile("state.bin");
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 } finally {
@@ -226,12 +224,13 @@ public class MainForm extends JFrame {
 
             }
         });
+        
         mainWindow = this;
 
         Container container = this.getContentPane();
         container.setLayout(new GridLayout(1, 2, 2, 2));
 
-        Group[] groups = controller.getGroups();
+        Group[] groups = this.mainController.getGroups();
         if (groups.length > 0) {
             groupDataJtable = new MyTable(getGroupData(groups), groupTableHeaders, 0, 1);
             currentGroup = groups[0];
@@ -267,13 +266,13 @@ public class MainForm extends JFrame {
                 if (text.equals("")) {
                     try {
                         int selectedRow = groupDataJtable.getSelectedRow();
-                        refreshTableGroupsData(controller.getGroups());
+                        refreshTableGroupsData(mainController.getGroups());
                         if(selectedRow == -1){
                             groupDataJtable.setRowSelectionInterval(0,0);
-                            currentGroup = controller.getGroup(groupDataJtable.getValueAt(0,0).toString());
+                            currentGroup = mainController.getGroup(groupDataJtable.getValueAt(0,0).toString());
                         }else {
                             groupDataJtable.setRowSelectionInterval(selectedRow, selectedRow);
-                            currentGroup = controller.getGroup(groupDataJtable.getValueAt(selectedRow,0).toString());
+                            currentGroup = mainController.getGroup(groupDataJtable.getValueAt(selectedRow,0).toString());
                         }
                         refreshTableStudentData(currentGroup.getStudents());
                         groupNameJLabel.setText(currentGroup.getNumberOfGroup());
@@ -282,7 +281,7 @@ public class MainForm extends JFrame {
                     }
                 }else {
                     try {
-                        Group[] currentGroups = controller.getGroupByPattern(text);
+                        Group[] currentGroups = mainController.getGroupByPattern(text);
                         refreshTableGroupsData(currentGroups);
                         if (currentGroups.length != 0) {
                             currentGroup = currentGroups[0];
@@ -321,7 +320,7 @@ public class MainForm extends JFrame {
                     refreshTableStudentData(currentGroup.getStudents());
                 }else {
                     try {
-                        Student[] studs = controller.getStudentByPattern(currentGroup, text);
+                        Student[] studs = mainController.getStudentByPattern(currentGroup, text);
                         refreshTableStudentData(studs);
                     } catch (RemoteException ex) {
                         Logger.getLogger(MainForm.class.getName()).log(Level.SEVERE, null, ex);
@@ -348,10 +347,10 @@ public class MainForm extends JFrame {
                     else {
                         port = DEFAULT_PORT;
                     }
-                Controller oldController = getController();
+                Controller oldController = getMainController();
                     try{
-                        setController(RMIUtils.connectToServer(port, address[0]));
-                        Group[] newGroups = controller.getGroups();
+                        setMainController(RMIUtils.connectToServer(port, address[0]));
+                        Group[] newGroups = mainController.getGroups();
                         refreshTableGroupsData(newGroups);
                         if(newGroups.length < 1)
                             currentGroup = FREE_GROUP;
@@ -370,12 +369,12 @@ public class MainForm extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    Group[] newGroups = controller.getGroups();
+                    Group[] newGroups = mainController.getGroups();
                     refreshTableGroupsData(newGroups);
                     if (newGroups.length < 1)
                         currentGroup = FREE_GROUP;
                     else {
-                        groupDataJtable.setRowSelectionInterval(1, 1);//TODO если что то поменять на 0 0
+                        groupDataJtable.setRowSelectionInterval(0, 0);//TODO если что то поменять на 0 0
                         currentGroup = newGroups[0];
                     }
                     refreshTableStudentData(currentGroup.getStudents());
@@ -388,7 +387,7 @@ public class MainForm extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    controller.writeToFile("state.bin");
+                    mainController.writeToFile("state.bin");
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 } finally {
@@ -397,13 +396,13 @@ public class MainForm extends JFrame {
             }
         });
         serializationMenu.add(serializeMenuItem);
-        serializeMenuItem.addActionListener(new ReaderActionListener(file -> controller.readFile(file)));
+        serializeMenuItem.addActionListener(new ReaderActionListener(file -> mainController.readFile(file)));
         serializationMenu.add(deserializeMenuItem);
-        deserializeMenuItem.addActionListener(new WriterActionListener(file -> controller.writeToFile(file)));
+        deserializeMenuItem.addActionListener(new WriterActionListener(file -> mainController.writeToFile(file)));
         XMLMenu.add(readFromXMLMenuItem);
-        readFromXMLMenuItem.addActionListener(new ReaderActionListener(file -> controller.readXML(file)));
+        readFromXMLMenuItem.addActionListener(new ReaderActionListener(file -> mainController.readXML(file)));
         XMLMenu.add(writeToXMLMenuItem);
-        writeToXMLMenuItem.addActionListener(new WriterActionListener(file -> controller.writeToXML(file)));
+        writeToXMLMenuItem.addActionListener(new WriterActionListener(file -> mainController.writeToXML(file)));
 
         groupTablePopupMenu.add(groupAddMenuItem);
         groupAddMenuItem.addActionListener(new ActionListener() {
@@ -462,19 +461,19 @@ public class MainForm extends JFrame {
                         try {
                             Group addingGroup = new GroupImpl(groupNameTextField.getText());
                             try {
-                                controller.addGroup(addingGroup);
+                                mainController.addGroup(addingGroup);
                             } catch (RemoteException ex) {
                                 Logger.getLogger(MainForm.class.getName()).log(Level.SEVERE, null, ex);
                             }
                             if(groupSearchTextField.getText().equals("")) {
-                                refreshTableGroupsData(controller.getGroups());
+                                refreshTableGroupsData(mainController.getGroups());
                                 currentGroup = addingGroup;
                                 groupNameJLabel.setText(currentGroup.getNumberOfGroup());
                                 refreshTableStudentData(currentGroup.getStudents());
                                 int newROwCount = groupDataJtable.getRowCount() - 1;
                                 groupDataJtable.setRowSelectionInterval(newROwCount, newROwCount);
                             }else {
-                                Group[] currentGroups = controller.getGroupByPattern(groupSearchTextField.getText());
+                                Group[] currentGroups = mainController.getGroupByPattern(groupSearchTextField.getText());
                                 refreshTableGroupsData(currentGroups);
                                 if (currentGroups.length != 0) {
                                     currentGroup = currentGroups[0];
@@ -523,12 +522,12 @@ public class MainForm extends JFrame {
                 if (groupDataJtable.getRowCount() != 0) {
                     try {
                         int selectedRow = groupDataJtable.getSelectedRow();
-                        Group deletingGroup = controller.getGroup(groupDataJtable.getValueAt(selectedRow, 0).toString());
-                        controller.deleteGroup(deletingGroup);
+                        Group deletingGroup = mainController.getGroup(groupDataJtable.getValueAt(selectedRow, 0).toString());
+                        mainController.deleteGroup(deletingGroup.getNumberOfGroup());
                         if(groupSearchTextField.getText().equals("")) {
-                            refreshTableGroupsData(controller.getGroups());
+                            refreshTableGroupsData(mainController.getGroups());
                         }else {
-                            refreshTableGroupsData(controller.getGroupByPattern(groupSearchTextField.getText()));
+                            refreshTableGroupsData(mainController.getGroupByPattern(groupSearchTextField.getText()));
                         }
                         if (selectedRow == groupDataJtable.getRowCount() && groupDataJtable.getRowCount() != 0)
                             groupDataJtable.setRowSelectionInterval(selectedRow - 1, selectedRow - 1);
@@ -539,7 +538,7 @@ public class MainForm extends JFrame {
                             groupNameJLabel.setText(FREE_GROUP.getNumberOfGroup());
                             refreshTableStudentData(currentGroup.getStudents());
                         } else {
-                            currentGroup = controller.getGroup(groupDataJtable.getValueAt(groupDataJtable.getSelectedRow(), 0).toString());
+                            currentGroup = mainController.getGroup(groupDataJtable.getValueAt(groupDataJtable.getSelectedRow(), 0).toString());
                             groupNameJLabel.setText(currentGroup.getNumberOfGroup());
                             refreshTableStudentData(currentGroup.getStudents());
                         }
@@ -607,8 +606,8 @@ public class MainForm extends JFrame {
                         public void actionPerformed(ActionEvent e) {
                             try {
                                 String newGroupName = groupNameTextField.getText();
-                                if( !oldGroupName.equals(newGroupName) && controller.setGroupName(oldGroupName, newGroupName)) {
-                                    currentGroup = controller.getGroup(newGroupName);
+                                if( !oldGroupName.equals(newGroupName) && mainController.setGroupName(oldGroupName, newGroupName)) {
+                                    currentGroup = mainController.getGroup(newGroupName);
                                     groupDataJtable.setValueAt(newGroupName, groupDataJtable.getSelectedRow(), 0);
                                     groupNameJLabel.setText(newGroupName);
                                     //refreshTableStudentData(currentGroup.getStudents());
@@ -644,7 +643,6 @@ public class MainForm extends JFrame {
                 }
             }
         });
-
 
         studentTablePopupMenu.add(studentAddMenuItem);
         studentAddMenuItem.addActionListener(new ActionListener() {
@@ -697,10 +695,10 @@ public class MainForm extends JFrame {
                     Container addStudentContainer = addStudentDialog.getContentPane();
                     JLabel studentIdLabel = new JLabel("ID: ");
                     JFormattedTextField studentIdTextField = new JFormattedTextField(NumberFormat.getIntegerInstance());
-                    JLabel studentNameLabel = new JLabel("Name: ");
-                    JTextField studentNameTextField = new JTextField();
                     JLabel studentSurnameLabel = new JLabel("Surname: ");
                     JTextField studentSurnameTextField = new JTextField();
+                    JLabel studentNameLabel = new JLabel("Name: ");
+                    JTextField studentNameTextField = new JTextField();                    
                     JLabel studentPatronymicLabel = new JLabel("Patronymic: ");
                     JTextField studentPatronymicTextField = new JTextField();
                     JLabel studentEnrollmentDateLabel = new JLabel("Enrollment date: ");
@@ -713,17 +711,18 @@ public class MainForm extends JFrame {
                         @Override
                         public void actionPerformed(ActionEvent e) {
                             try {
-                                controller.addStudent(currentGroup,
+                                mainController.addStudent(currentGroup.getNumberOfGroup(),
                                         Integer.parseInt(studentIdTextField.getText()),
                                         studentNameTextField.getText(),
                                         studentSurnameTextField.getText(),
                                         studentPatronymicTextField.getText(),
                                         (Date)datePicker.getModel().getValue()
                                         );
+                                currentGroup = mainController.getGroup(currentGroup.getNumberOfGroup());
                                 groupDataJtable.setValueAt(Integer.toString(currentGroup.getSizeOfGroup()), groupDataJtable.getSelectedRow(), 1);
                                 if(studentSearchTextField.getText().equals(""))
                                     refreshTableStudentData(currentGroup.getStudents());
-                                else refreshTableStudentData(controller.getStudentByPattern(currentGroup, studentSearchTextField.getText()));
+                                else refreshTableStudentData(mainController.getStudentByPattern(currentGroup, studentSearchTextField.getText()));
                                 mainWindow.setEnabled(true);
                                 addStudentDialog.dispose();
                             } catch (NotValidValueException ex) {
@@ -750,11 +749,11 @@ public class MainForm extends JFrame {
                     });
                     JPanel addStudentPanel = new JPanel(new GridLayout(6, 2, 2, 2));
                     addStudentPanel.add(studentIdLabel);
-                    addStudentPanel.add(studentIdTextField);
-                    addStudentPanel.add(studentNameLabel);
-                    addStudentPanel.add(studentNameTextField);
+                    addStudentPanel.add(studentIdTextField);                    
                     addStudentPanel.add(studentSurnameLabel);
                     addStudentPanel.add(studentSurnameTextField);
+                    addStudentPanel.add(studentNameLabel);
+                    addStudentPanel.add(studentNameTextField);
                     addStudentPanel.add(studentPatronymicLabel);
                     addStudentPanel.add(studentPatronymicTextField);
                     addStudentPanel.add(studentEnrollmentDateLabel);
@@ -773,10 +772,11 @@ public class MainForm extends JFrame {
                 if(currentGroup.getSizeOfGroup() > 0){
                     try {
                         int oldSelectedRow = studentDataJTable.getSelectedRow();
-                        controller.deleteStudent(currentGroup, controller.getStudentById(currentGroup, Integer.parseInt(studentDataJTable.getValueAt(oldSelectedRow, 0).toString())));
+                        mainController.deleteStudent(currentGroup.getNumberOfGroup(), mainController.getStudentById(currentGroup, Integer.parseInt(studentDataJTable.getValueAt(oldSelectedRow, 0).toString())));
+                        currentGroup = mainController.getGroup(currentGroup.getNumberOfGroup());
                         if(studentSearchTextField.getText().equals(""))
                             refreshTableStudentData(currentGroup.getStudents());
-                        else refreshTableStudentData(controller.getStudentByPattern(currentGroup, studentSearchTextField.getText()));
+                        else refreshTableStudentData(mainController.getStudentByPattern(currentGroup, studentSearchTextField.getText()));
                         groupDataJtable.setValueAt(Integer.toString(currentGroup.getSizeOfGroup()), groupDataJtable.getSelectedRow(), 1);
                         if(currentGroup.getSizeOfGroup() != 0){
                             if(oldSelectedRow == currentGroup.getSizeOfGroup())
@@ -841,10 +841,10 @@ public class MainForm extends JFrame {
                             }
                         });
                         Container addStudentContainer = changeStudentDialog.getContentPane();
-                        JLabel studentNameLabel = new JLabel("Name: ");
+                        JLabel studentNameLabel = new JLabel("Surname: ");
                         JTextField studentNameTextField = new JTextField();
                         studentNameTextField.setText(studentDataJTable.getValueAt(studentSelectedRow, 1).toString());
-                        JLabel studentSurnameLabel = new JLabel("Surname: ");
+                        JLabel studentSurnameLabel = new JLabel("Name: ");
                         JTextField studentSurnameTextField = new JTextField();
                         studentSurnameTextField.setText(studentDataJTable.getValueAt(studentSelectedRow, 2).toString());
                         JLabel studentPatronymicLabel = new JLabel("Patronymic: ");
@@ -852,7 +852,7 @@ public class MainForm extends JFrame {
                         studentPatronymicTextField.setText(studentDataJTable.getValueAt(studentSelectedRow, 3).toString());
                         JLabel studentEnrollmentDateLabel = new JLabel("Enrollment date: ");
                         UtilDateModel dateModel = new UtilDateModel();
-                        dateModel.setValue(controller.getStudentById(currentGroup, Integer.parseInt(studentDataJTable.getValueAt(studentSelectedRow, 0).toString())).getEnrollmentDate());
+                        dateModel.setValue(mainController.getStudentById(currentGroup, Integer.parseInt(studentDataJTable.getValueAt(studentSelectedRow, 0).toString())).getEnrollmentDate());
                         JDatePanelImpl datePanel = new JDatePanelImpl(dateModel);
                         JDatePickerImpl datePicker = new JDatePickerImpl(datePanel);
                         JButton okButton = new JButton("OK");
@@ -860,16 +860,17 @@ public class MainForm extends JFrame {
                             @Override
                             public void actionPerformed(ActionEvent e) {
                                 try {
-                                    controller.setStudent(currentGroup,
+                                    mainController.setStudent(currentGroup.getNumberOfGroup(),
                                             Integer.parseInt(studentDataJTable.getValueAt(studentSelectedRow, 0).toString()),
                                             studentNameTextField.getText(),
                                             studentSurnameTextField.getText(),
                                             studentPatronymicTextField.getText(),
                                             (Date)datePicker.getModel().getValue()
                                     );
+                                    currentGroup = mainController.getGroup(currentGroup.getNumberOfGroup());
                                     if(studentSearchTextField.getText().equals(""))
                                         refreshTableStudentData(currentGroup.getStudents());
-                                    else refreshTableStudentData(controller.getStudentByPattern(currentGroup, studentSearchTextField.getText()));
+                                    else refreshTableStudentData(mainController.getStudentByPattern(currentGroup, studentSearchTextField.getText()));
                                     studentDataJTable.setRowSelectionInterval(studentSelectedRow, studentSelectedRow);
                                     mainWindow.setEnabled(true);
                                     changeStudentDialog.dispose();
@@ -931,7 +932,7 @@ public class MainForm extends JFrame {
             @Override
             public void mouseReleased(MouseEvent e) {
                 try {
-                    currentGroup = controller.getGroup(groupDataJtable.getValueAt(groupDataJtable.getSelectedRow(), 0).toString());
+                    currentGroup = mainController.getGroup(groupDataJtable.getValueAt(groupDataJtable.getSelectedRow(), 0).toString());
                     groupNameJLabel.setText(currentGroup.getNumberOfGroup());
                     refreshTableStudentData(currentGroup.getStudents());
                 } catch (RemoteException ex) {
@@ -1088,7 +1089,7 @@ public class MainForm extends JFrame {
     private String[] showConnectDialog(){
         if(mainWindow != null)
             mainWindow.setEnabled(false);
-        String result =  JOptionPane.showInputDialog("Input ip address: ", "255.255.255.255:1111");
+        String result =  JOptionPane.showInputDialog("Input ip address: ", "127.0.0.1:1099");
         if(result == null) {
             if (mainWindow != null)
                 mainWindow.setEnabled(true);
@@ -1101,10 +1102,12 @@ public class MainForm extends JFrame {
         }
     }
 
-    private void setController(Controller newContr){
-        this.controller = newContr;
+    private void setMainController(Controller newContr){
+        this.mainController = newContr;
     }
 
-    private Controller getController(){return controller;}
+    private Controller getMainController(){
+        return mainController;
+    }
 
 }

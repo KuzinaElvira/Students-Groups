@@ -5,6 +5,9 @@
  */
 package studentsgroups.controller;
 
+import studentsgroups.controller.utils.exceptions.ObjectNotFoundException;
+import studentsgroups.controller.utils.exceptions.NotValidValueException;
+import studentsgroups.controller.utils.exceptions.ObjectExistsException;
 import studentsgroups.model.Faculty;
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,6 +20,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.Objects;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -140,7 +144,7 @@ public class ControllerImpl implements Controller{
         Collection<Group> groupsByPattern = new LinkedList<>();
         CheckMatching checker = new CheckMatching(pattern);
         for(Group group : faculty){
-            if(checker.doMatch(pattern, group.getNumberOfGroup())){
+            if(checker.isContains(pattern, group.getNumberOfGroup())){
                 groupsByPattern.add(group);
             }
         }
@@ -170,7 +174,7 @@ public class ControllerImpl implements Controller{
         CheckMatching checker = new CheckMatching(pattern);
         for(Group group : faculty){            
             for(Student student : group){
-                if(checker.doMatch(pattern, Integer.toString(student.getIdStudent()), student.getSurname(), student.getName(), student.getPatronymic())){
+                if(checker.isContains(pattern, Integer.toString(student.getIdStudent()), student.getSurname(), student.getName(), student.getPatronymic())){
                 studentsByPattern.add(student);
                 }
             }
@@ -189,7 +193,7 @@ public class ControllerImpl implements Controller{
         Collection<Student> studentsByPattern = new LinkedList<>();
         CheckMatching checker = new CheckMatching(pattern);
         for (Student student : group) {
-            if(checker.doMatch(pattern, student.getSurname(), student.getName(), student.getPatronymic())){
+            if(checker.isContains(pattern, student.getSurname(), student.getName(), student.getPatronymic())){
                 studentsByPattern.add(student);
                 }
         }
@@ -198,7 +202,7 @@ public class ControllerImpl implements Controller{
     }   
     
     /**
-     * Добавление студента в группу
+     * Добавление студента в группу по ссылкам на группу и студента
      * @param group
      * @param student 
      */
@@ -215,7 +219,7 @@ public class ControllerImpl implements Controller{
     }
 
     /**
-     * Добавление студента в группу
+     * Добавление студента в группу по ссылке на группу и полям
      * @param group
      * @param id
      * @param name
@@ -230,13 +234,38 @@ public class ControllerImpl implements Controller{
     }
     
     /**
-     * Удаление студента из группы
+     * Добавление студента в группу по имени группы и полям студента
+     * @param groupName
+     * @param id
+     * @param name
+     * @param surname
+     * @param patronymic
+     * @param enrollmentDate 
+     */
+    @Override
+    public synchronized void addStudent(String groupName, int id, String name, String surname, String patronymic, Date enrollmentDate){
+        Student newStudent = new StudentImpl(id, surname, name, patronymic, enrollmentDate);
+        addStudent(getGroupByName(groupName), newStudent);
+    }
+    
+    /**
+     * Удаление студента из группы по ссылке на группу
      * @param group
      * @param exstudent 
      */
     @Override
     public synchronized void deleteStudent(Group group, Student exstudent){
         group.deleteStudent(exstudent);
+    }
+    
+    /**
+     * Удаление студента из группы по имени группы
+     * @param groupName
+     * @param exstudent 
+     */
+    @Override
+    public synchronized void deleteStudent(String groupName, Student exstudent){
+        getGroupByName(groupName).deleteStudent(exstudent);
     }
     
     /**
@@ -280,12 +309,21 @@ public class ControllerImpl implements Controller{
     }
     
     /**
-     * Удаление группы
+     * Удаление группы по ссылке
      * @param exgroup 
      */
     @Override
     public synchronized void deleteGroup(Group exgroup){
         faculty.deleteGroup(exgroup);
+    }
+    
+    /**
+     * Удаление группы по имени
+     * @param exgroupName 
+     */
+    @Override
+    public synchronized void deleteGroup(String exgroupName){
+        faculty.deleteGroup(getGroupByName(exgroupName));
     }
     
     /**
@@ -313,7 +351,7 @@ public class ControllerImpl implements Controller{
     }
     
     /**
-     * Изменение студента
+     * Изменение студента по группе
      * @param group
      * @param idStudent
      * @param surname
@@ -334,6 +372,41 @@ public class ControllerImpl implements Controller{
                 student.setPatronymic(patronymic);
                 student.setEnrollmentDate(enrollmentDate);
                 return true;
+            }
+        }
+        throw new ObjectNotFoundException();
+    }
+    
+    /**
+     * Изменение студента по имени группы
+     * @param groupName
+     * @param idStudent
+     * @param surname
+     * @param name
+     * @param patronymic
+     * @param enrollmentDate
+     * @return 
+     */
+    public synchronized boolean setStudent(String groupName, int idStudent, String surname, String name, String patronymic, Date enrollmentDate) {
+        isValidString(surname);
+        isValidString(name);
+        isValidString(patronymic);
+        for (Student student : getGroupByName(groupName)) {
+            if (student.getIdStudent() == idStudent) {
+                student.setSurname(surname);
+                student.setName(name);
+                student.setPatronymic(patronymic);
+                student.setEnrollmentDate(enrollmentDate);
+                return true;
+            }
+        }
+        throw new ObjectNotFoundException();
+    }
+    
+    private Group getGroupByName(String groupName){
+        for(Group gp : faculty){
+            if(gp.getNumberOfGroup().equals(groupName)){
+                return gp;
             }
         }
         throw new ObjectNotFoundException();
@@ -429,4 +502,35 @@ public class ControllerImpl implements Controller{
         Arrays.sort(groups, groupComp);
         return groups;
     }
+
+    @Override
+    public String toString() {
+        return "ControllerImpl{" + "faculty=" + faculty.toString() + '}';
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 71 * hash + Objects.hashCode(this.faculty);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ControllerImpl other = (ControllerImpl) obj;
+        if (!Objects.equals(this.faculty, other.faculty)) {
+            return false;
+        }
+        return true;
+    }
+    
 }

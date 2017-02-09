@@ -27,13 +27,13 @@ public class Server {
         Faculty fac = new FacultyImpl("FIST");
 
         Group group = new GroupImpl("TP-666");
-        Student student = new StudentImpl(1, "Ivanova", "Yana", "Alexandrovna", Date.from(Instant.now()));
+        Student student = new StudentImpl(1, "yuf", "Yana", "Alexandrovna", Date.from(Instant.now()));
         group.addStudent(student);
-        student = new StudentImpl(2, "Ivanova", "Yana", "Alexandrovna", Date.from(Instant.now()));
+        student = new StudentImpl(2, "ycun", "Yana", "Alexandrovna", Date.from(Instant.now()));
         group.addStudent(student);
-        student = new StudentImpl(3, "Ivanova", "Yana", "Alexandrovna", Date.from(Instant.now()));
+        student = new StudentImpl(3, "kmnbvc", "Yana", "Alexandrovna", Date.from(Instant.now()));
         group.addStudent(student);
-        student = new StudentImpl(4, "Ivanova", "Yana", "Alexandrovna", Date.from(Instant.now()));
+        student = new StudentImpl(4, "cxvbnm", "Yana", "Alexandrovna", Date.from(Instant.now()));
         group.addStudent(student);
         student = new StudentImpl(5, "Ivanova", "Yana", "Alexandrovna", Date.from(Instant.now()));
         group.addStudent(student);

@@ -24,7 +24,7 @@ public class CheckMatching {
         pattern = Pattern.compile(regExp);
     }
     
-//    @Deprecated
+    @Deprecated
     private boolean isMatches(String str) {
         Matcher m = pattern.matcher(str);
         return m.find();
@@ -33,7 +33,7 @@ public class CheckMatching {
 //    @Deprecated
     public boolean isContains(String str, String... fields) {
         for (String field : fields) {
-            if (field.contains(str)) {
+            if (field.toLowerCase().contains(str.toLowerCase())) {
                 return true;
             }
         }
@@ -42,12 +42,12 @@ public class CheckMatching {
     
 //    @Deprecated
     public boolean doMatch(String str, String... fields){
-//        if(!str.contains("\\.") && !str.contains("\\?") && !str.contains("\\*") && !str.contains("\\+") && !str.contains("\\$") 
-//            && !str.contains("\\^") && !str.contains("\\(") && !str.contains("\\)") && !str.contains("\\[") && !str.contains("\\]")
-//            && !str.contains("\\{") && !str.contains("\\}") && !str.contains("\\\\")){
-//            return isContains(str, fields);
-//        }
+        if(!str.contains("\\.") && !str.contains("\\?") && !str.contains("\\*") && !str.contains("\\+") && !str.contains("\\$") 
+            && !str.contains("\\^") && !str.contains("\\(") && !str.contains("\\)") && !str.contains("\\[") && !str.contains("\\]")
+            && !str.contains("\\{") && !str.contains("\\}") && !str.contains("\\\\")){
+            return isContains(str, fields);
+        }
 //        else
-            return isMatches(str);
+            return isContains(str, fields);
     }
 }
